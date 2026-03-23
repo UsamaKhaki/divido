@@ -1,0 +1,42 @@
+{
+  "name": "mobile",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.95.0",
+    "axios": "^1.13.6",
+    "expo": "~55.0.8",
+    "expo-status-bar": "~55.0.4",
+    "immer": "^11.1.4",
+    "nativewind": "^4.2.3",
+    "react": "19.2.0",
+    "react-native": "0.83.2",
+    "zustand": "^5.0.12"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "@types/react": "~19.2.2",
+    "@typescript-eslint/eslint-plugin": "^8.57.1",
+    "@typescript-eslint/parser": "^8.57.1",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-prettier": "^5.5.5",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-native": "^5.0.0",
+    "prettier": "^3.8.1",
+    "typescript": "~5.9.2"
+  },
+  "private": true
+}
