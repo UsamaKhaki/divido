@@ -5,6 +5,8 @@ import type {
   Expense,
   ExpenseSummary,
   PaginatedResponse,
+  UpdateSplitsRequest,
+  UpdateSplitsResponse,
 } from '@/types/api.types'
 
 export const expensesApi = {
@@ -13,6 +15,20 @@ export const expensesApi = {
       .get<PaginatedResponse<ExpenseSummary>>(`/groups/${groupId}/expenses`)
       .then((r) => r.data.data),
 
+  getById: (expenseId: number): Promise<Expense> =>
+    api.get<ApiResponse<Expense>>(`/expenses/${expenseId}`).then((r) => r.data.data),
+
   create: (payload: CreateExpenseRequest): Promise<Expense> =>
     api.post<ApiResponse<Expense>>('/expenses', payload).then((r) => r.data.data),
+
+  updateSplits: (
+    expenseId: number,
+    itemId: number,
+    payload: UpdateSplitsRequest,
+  ): Promise<UpdateSplitsResponse> =>
+    api
+      .put<
+        ApiResponse<UpdateSplitsResponse>
+      >(`/expenses/${expenseId}/items/${itemId}/splits`, payload)
+      .then((r) => r.data.data),
 }

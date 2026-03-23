@@ -2,8 +2,11 @@
 
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Expenses\ExpenseController;
+use App\Http\Controllers\Api\Expenses\ExpenseItemSplitController;
+use App\Http\Controllers\Api\Expenses\SettlementController;
 use App\Http\Controllers\Api\Groups\GroupController;
 use App\Http\Controllers\Api\Groups\GroupMemberController;
+use App\Http\Controllers\Api\Groups\GroupSettlementController;
 use Illuminate\Support\Facades\Route;
 
 // ─── Public Auth Routes ───────────────────────────────────────────────────────
@@ -36,4 +39,15 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('expenses',            [ExpenseController::class, 'store'])->name('expenses.store');
     Route::get('expenses/{expense}',   [ExpenseController::class, 'show'])->name('expenses.show');
     Route::delete('expenses/{expense}', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
+
+    // ─── Phase 2: Item Splits & Settlements ──────────────────────────────────────
+
+    // Item splits
+    Route::put('expenses/{expense}/items/{item}/splits', [ExpenseItemSplitController::class, 'update'])->name('expenses.items.splits.update');
+
+    // Group settlements
+    Route::get('groups/{group}/settlements', [GroupSettlementController::class, 'index'])->name('groups.settlements.index');
+
+    // Settle a payment
+    Route::post('settlements/{settlement}/settle', [SettlementController::class, 'settle'])->name('settlements.settle');
 });

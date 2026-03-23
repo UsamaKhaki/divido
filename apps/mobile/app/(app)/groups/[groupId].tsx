@@ -96,7 +96,9 @@ export default function GroupDetailScreen() {
           Expenses
         </Text>
         {expenses && expenses.length > 0 ? (
-          expenses.map((expense) => <ExpenseCard key={expense.id} expense={expense} />)
+          expenses.map((expense) => (
+            <ExpenseCard key={expense.id} expense={expense} groupId={groupId} />
+          ))
         ) : (
           <EmptyState message="No expenses yet." hint="Add the first one below." />
         )}
@@ -150,24 +152,34 @@ export default function GroupDetailScreen() {
         </View>
       ) : (
         <View
-          className="absolute bottom-0 left-0 right-0 flex-row gap-3 border-t border-gray-100 bg-white px-4 py-3"
+          className="absolute bottom-0 left-0 right-0 border-t border-gray-100 bg-white px-4 py-3"
           style={{ paddingBottom: insets.bottom + 8 }}
         >
+          <View className="mb-2 flex-row gap-2">
+            <Pressable
+              className="flex-1 min-h-[44px] items-center justify-center rounded-xl border border-gray-200"
+              onPress={() => setShowAddMember(true)}
+              accessibilityRole="button"
+              accessibilityLabel="Add member to group"
+            >
+              <Text className="text-sm font-medium text-gray-700">+ Add member</Text>
+            </Pressable>
+            <Pressable
+              className="flex-1 min-h-[44px] items-center justify-center rounded-xl bg-blue-600"
+              onPress={() => router.push(`/(app)/groups/${groupId}/add-expense`)}
+              accessibilityRole="button"
+              accessibilityLabel="Add expense"
+            >
+              <Text className="text-sm font-semibold text-white">+ Add expense</Text>
+            </Pressable>
+          </View>
           <Pressable
-            className="flex-1 min-h-[44px] items-center justify-center rounded-xl border border-gray-200"
-            onPress={() => setShowAddMember(true)}
+            className="min-h-[44px] items-center justify-center rounded-xl bg-gray-900"
+            onPress={() => router.push(`/(app)/groups/${groupId}/settlements`)}
             accessibilityRole="button"
-            accessibilityLabel="Add member to group"
+            accessibilityLabel="View settlements"
           >
-            <Text className="text-sm font-medium text-gray-700">+ Add member</Text>
-          </Pressable>
-          <Pressable
-            className="flex-1 min-h-[44px] items-center justify-center rounded-xl bg-blue-600"
-            onPress={() => router.push(`/(app)/groups/${groupId}/add-expense`)}
-            accessibilityRole="button"
-            accessibilityLabel="Add expense"
-          >
-            <Text className="text-sm font-semibold text-white">+ Add expense</Text>
+            <Text className="text-sm font-semibold text-white">View Settlements</Text>
           </Pressable>
         </View>
       )}

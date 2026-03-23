@@ -14,9 +14,10 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 interface ExpenseCardProps {
   expense: ExpenseSummary
+  groupId: number
 }
 
-export const ExpenseCard = ({ expense }: ExpenseCardProps) => {
+export const ExpenseCard = ({ expense, groupId }: ExpenseCardProps) => {
   const categoryLabel = expense.category
     ? (CATEGORY_LABELS[expense.category] ?? expense.category)
     : null
@@ -29,7 +30,7 @@ export const ExpenseCard = ({ expense }: ExpenseCardProps) => {
   return (
     <Pressable
       className="mx-4 mb-3 min-h-[72px] rounded-2xl border border-gray-100 bg-white px-4 py-4 shadow-sm active:bg-gray-50"
-      onPress={() => router.push(`/(app)/expenses/${expense.id}`)}
+      onPress={() => router.push(`/(app)/groups/${groupId}/expenses/${expense.id}`)}
       accessibilityRole="button"
       accessibilityLabel={`View expense ${expense.title}`}
     >

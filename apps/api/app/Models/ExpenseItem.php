@@ -6,6 +6,7 @@ use Database\Factories\ExpenseItemFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ExpenseItem extends Model
 {
@@ -32,5 +33,10 @@ class ExpenseItem extends Model
     public function expense(): BelongsTo
     {
         return $this->belongsTo(Expense::class);
+    }
+
+    public function splits(): HasMany
+    {
+        return $this->hasMany(ItemSplit::class);
     }
 }

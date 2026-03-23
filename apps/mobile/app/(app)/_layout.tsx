@@ -42,6 +42,14 @@ export default function AppLayout() {
         name="groups/[groupId]/add-expense"
         options={{ title: 'Add Expense', headerShown: true }}
       />
+      <Stack.Screen
+        name="groups/[groupId]/expenses/[expenseId]"
+        options={{ title: 'Expense', headerShown: true }}
+      />
+      <Stack.Screen
+        name="groups/[groupId]/settlements"
+        options={{ title: 'Settlements', headerShown: true }}
+      />
     </Stack>
   )
 }

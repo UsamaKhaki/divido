@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OpenApi\Attributes as OA;
 
+// ItemSplitResource is in the same namespace — referenced below
 #[OA\Schema(schema: 'ExpenseItemResource')]
 class ExpenseItemResource extends JsonResource
 {
@@ -21,6 +22,7 @@ class ExpenseItemResource extends JsonResource
             'name'     => $this->name,
             'price'    => (float) $this->price,
             'quantity' => $this->quantity,
+            'splits'   => ItemSplitResource::collection($this->whenLoaded('splits')),
         ];
     }
 }

@@ -1,4 +1,7 @@
 export { expensesApi } from './services/expensesApi'
 export { useExpensesQuery } from './hooks/useExpensesQuery'
+export { useExpenseQuery } from './hooks/useExpenseQuery'
 export { useCreateExpenseMutation } from './hooks/useCreateExpenseMutation'
+export { useUpdateSplitsMutation } from './hooks/useUpdateSplitsMutation'
 export { ExpenseCard } from './components/ExpenseCard'
+export { SplitItemRow } from './components/SplitItemRow'
