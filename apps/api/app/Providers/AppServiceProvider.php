@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Repositories\ExpenseRepository;
+use App\Repositories\GroupRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +13,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(GroupRepository::class);
+        $this->app->singleton(ExpenseRepository::class);
     }
 
     /**
