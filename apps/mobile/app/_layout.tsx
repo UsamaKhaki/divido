@@ -5,6 +5,7 @@ import { Stack } from 'expo-router'
 import { useEffect } from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
+import { useNotificationPermission } from '@/features/notifications/hooks/useNotificationPermission'
 import { useSyncQueue } from '@/features/sync/hooks/useSyncQueue'
 import { localDb } from '@/features/sync/services/localDb'
 
@@ -21,6 +22,7 @@ const queryClient = new QueryClient({
 // Must be inside QueryClientProvider (useSyncQueue uses useQueryClient).
 const AppBootstrap = () => {
   useSyncQueue()
+  useNotificationPermission()
 
   useEffect(() => {
     void localDb.init()

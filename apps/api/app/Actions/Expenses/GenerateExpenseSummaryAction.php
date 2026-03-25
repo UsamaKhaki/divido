@@ -12,9 +12,9 @@ class GenerateExpenseSummaryAction
         $expense->loadMissing(['group', 'paidBy', 'items']);
 
         $groupName = $expense->group->name;
-        $title     = $expense->title;
-        $total     = number_format((float) $expense->total_amount, 0);
-        $payer     = $expense->paidBy->name;
+        $title = $expense->title;
+        $total = number_format((float) $expense->total_amount, 0);
+        $payer = $expense->paidBy->name;
 
         // Sum item_splits per user for this expense
         $splits = DB::table('item_splits')
@@ -30,7 +30,7 @@ class GenerateExpenseSummaryAction
         $lines = ["{$groupName} — {$title}", "Total: PKR {$total}", '', "{$payer} paid"];
 
         foreach ($splits as $split) {
-            $amount  = number_format((float) $split->total_owed, 0);
+            $amount = number_format((float) $split->total_owed, 0);
             $lines[] = "{$split->name} owes PKR {$amount}";
         }
 

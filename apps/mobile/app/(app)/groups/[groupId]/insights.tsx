@@ -1,5 +1,6 @@
 import { useLocalSearchParams } from 'expo-router'
-import { ScrollView, Text, View } from 'react-native'
+import { useEffect, useRef } from 'react'
+import { Animated, ScrollView, Text, View } from 'react-native'
 
 import { EmptyState } from '@/components/EmptyState'
 import { ErrorState } from '@/components/ErrorState'
@@ -8,11 +9,28 @@ import { useGroupInsightsQuery } from '@/features/insights/hooks/useGroupInsight
 
 const formatAmount = (amount: number) => `PKR ${amount.toFixed(2)}`
 
-const PercentBar = ({ percent }: { percent: number }) => (
-  <View className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
-    <View className="h-full rounded-full bg-blue-500" style={{ width: `${percent}%` }} />
-  </View>
-)
+const PercentBar = ({ percent }: { percent: number }) => {
+  const widthAnim = useRef(new Animated.Value(0)).current
+
+  useEffect(() => {
+    Animated.timing(widthAnim, {
+      toValue: percent,
+      duration: 600,
+      useNativeDriver: false,
+    }).start()
+  }, [percent, widthAnim])
+
+  const animatedWidth = widthAnim.interpolate({
+    inputRange: [0, 100],
+    outputRange: ['0%', '100%'],
+  })
+
+  return (
+    <View className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
+      <Animated.View className="h-full rounded-full bg-blue-500" style={{ width: animatedWidth }} />
+    </View>
+  )
+}
 
 export default function InsightsScreen() {
   const { groupId: groupIdParam } = useLocalSearchParams<{ groupId: string }>()

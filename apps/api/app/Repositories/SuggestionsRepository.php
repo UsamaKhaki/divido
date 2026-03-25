@@ -14,7 +14,7 @@ class SuggestionsRepository
      * Returns a flat collection of stdClass objects with:
      *   item_name, user_id, user_name, assignment_count
      *
-     * @param  array<int, string> $itemNames
+     * @param array<int, string> $itemNames
      */
     public function getAssignmentCounts(int $groupId, array $itemNames): Collection
     {

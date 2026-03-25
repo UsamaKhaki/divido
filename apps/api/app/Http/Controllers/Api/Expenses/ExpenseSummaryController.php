@@ -17,7 +17,7 @@ class ExpenseSummaryController extends Controller
 {
     public function __construct(
         private readonly ExpenseRepository $expenseRepo,
-        private readonly GroupRepository   $groupRepo,
+        private readonly GroupRepository $groupRepo,
     ) {}
 
     #[OA\Get(
@@ -35,11 +35,11 @@ class ExpenseSummaryController extends Controller
         $expense = $this->expenseRepo->findById($expenseId);
 
         if (! $expense) {
-            throw new ExpenseNotFoundException();
+            throw new ExpenseNotFoundException;
         }
 
         if (! $this->groupRepo->isMember($expense->group, $request->user()->id)) {
-            throw new NotGroupMemberException();
+            throw new NotGroupMemberException;
         }
 
         return ApiResponse::ok(['summary' => $action->execute($expense)]);

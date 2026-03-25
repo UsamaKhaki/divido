@@ -38,14 +38,14 @@ class GroupSuggestionController extends Controller
         $group = $this->groupRepo->findById($groupId);
 
         if (! $group) {
-            throw new GroupNotFoundException();
+            throw new GroupNotFoundException;
         }
 
         if (! $this->groupRepo->isMember($group, $request->user()->id)) {
-            throw new NotGroupMemberException();
+            throw new NotGroupMemberException;
         }
 
-        $rawItems  = (string) $request->query('items', '');
+        $rawItems = (string) $request->query('items', '');
         $itemNames = array_values(array_filter(array_map('trim', explode(',', $rawItems))));
 
         $suggestions = $itemNames

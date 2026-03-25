@@ -31,11 +31,11 @@ class GroupInsightsController extends Controller
         $group = $this->groupRepo->findById($groupId);
 
         if (! $group) {
-            throw new GroupNotFoundException();
+            throw new GroupNotFoundException;
         }
 
         if (! $this->groupRepo->isMember($group, $request->user()->id)) {
-            throw new NotGroupMemberException();
+            throw new NotGroupMemberException;
         }
 
         return ApiResponse::ok($action->execute($groupId));

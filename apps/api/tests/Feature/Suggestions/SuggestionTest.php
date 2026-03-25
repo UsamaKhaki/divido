@@ -5,9 +5,10 @@ use App\Models\ExpenseItem;
 use App\Models\Group;
 use App\Models\ItemSplit;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-uses(TestCase::class, \Illuminate\Foundation\Testing\RefreshDatabase::class);
+uses(TestCase::class, RefreshDatabase::class);
 
 describe('GET /api/v1/groups/{group}/suggestions', function () {
 
@@ -27,9 +28,9 @@ describe('GET /api/v1/groups/{group}/suggestions', function () {
     });
 
     it('returns 403 when user is not a group member', function () {
-        $owner    = User::factory()->create();
+        $owner = User::factory()->create();
         $outsider = User::factory()->create();
-        $group    = Group::factory()->hasAttached([$owner], [], 'members')->create(['created_by' => $owner->id]);
+        $group = Group::factory()->hasAttached([$owner], [], 'members')->create(['created_by' => $owner->id]);
 
         $this->actingAs($outsider)
             ->getJson("/api/v1/groups/{$group->id}/suggestions?items=Sheesha")
@@ -37,7 +38,7 @@ describe('GET /api/v1/groups/{group}/suggestions', function () {
     });
 
     it('returns empty array when no items param is provided', function () {
-        $user  = User::factory()->create();
+        $user = User::factory()->create();
         $group = Group::factory()->hasAttached([$user], [], 'members')->create(['created_by' => $user->id]);
 
         $this->actingAs($user)
@@ -47,7 +48,7 @@ describe('GET /api/v1/groups/{group}/suggestions', function () {
     });
 
     it('returns empty suggested_users when there is no split history', function () {
-        $user  = User::factory()->create();
+        $user = User::factory()->create();
         $group = Group::factory()->hasAttached([$user], [], 'members')->create(['created_by' => $user->id]);
 
         $this->actingAs($user)
@@ -68,13 +69,13 @@ describe('GET /api/v1/groups/{group}/suggestions', function () {
         // Create 3 expenses where Sheesha was split: user1 assigned twice, user2 once
         foreach (range(1, 3) as $i) {
             $expense = Expense::factory()->create(['group_id' => $group->id, 'paid_by' => $user1->id]);
-            $item    = ExpenseItem::factory()->create(['expense_id' => $expense->id, 'name' => 'Sheesha', 'price' => 100, 'quantity' => 1]);
+            $item = ExpenseItem::factory()->create(['expense_id' => $expense->id, 'name' => 'Sheesha', 'price' => 100, 'quantity' => 1]);
 
             $assignedUser = $i <= 2 ? $user1 : $user2;
             ItemSplit::factory()->create([
                 'expense_item_id' => $item->id,
-                'user_id'         => $assignedUser->id,
-                'amount'          => 100.00,
+                'user_id' => $assignedUser->id,
+                'amount' => 100.00,
             ]);
         }
 
@@ -95,7 +96,7 @@ describe('GET /api/v1/groups/{group}/suggestions', function () {
     });
 
     it('returns suggestions for multiple items in one request', function () {
-        $user  = User::factory()->create();
+        $user = User::factory()->create();
         $group = Group::factory()->hasAttached([$user], [], 'members')->create(['created_by' => $user->id]);
 
         $expense = Expense::factory()->create(['group_id' => $group->id, 'paid_by' => $user->id]);

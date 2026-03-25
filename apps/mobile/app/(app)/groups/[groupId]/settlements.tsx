@@ -1,9 +1,12 @@
 import { useLocalSearchParams } from 'expo-router'
-import { ScrollView, Text, View } from 'react-native'
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native'
 
 import { EmptyState } from '@/components/EmptyState'
 import { ErrorState } from '@/components/ErrorState'
 import { LoadingSkeleton } from '@/components/LoadingSkeleton'
+import { useGroupQuery } from '@/features/groups/hooks/useGroupQuery'
+import { useNotificationPermission } from '@/features/notifications/hooks/useNotificationPermission'
+import { useScheduleReminder } from '@/features/notifications/hooks/useScheduleReminder'
 import { SettlementCard } from '@/features/settlements/components/SettlementCard'
 import { useSettlementsQuery } from '@/features/settlements/hooks/useSettlementsQuery'
 import { useSettleMutation } from '@/features/settlements/hooks/useSettleMutation'
@@ -13,8 +16,22 @@ export default function SettlementsScreen() {
   const groupId = Number(groupIdParam)
 
   const { data, isLoading, isError, refetch } = useSettlementsQuery(groupId)
-
+  const { data: group } = useGroupQuery(groupId)
   const { mutate: settle, isPending: isSettling } = useSettleMutation()
+  const { schedule } = useScheduleReminder()
+  const hasPermission = useNotificationPermission()
+
+  const handleSetReminder = () => {
+    if (!hasPermission) {
+      Alert.alert(
+        'Notifications disabled',
+        'Enable notifications in Settings to receive settlement reminders.',
+      )
+      return
+    }
+    void schedule({ groupId, groupName: group?.name ?? 'Your group' })
+    Alert.alert('Reminder set', "You'll be reminded weekly to settle up.")
+  }
 
   if (isLoading) return <LoadingSkeleton />
   if (isError)
@@ -77,6 +94,18 @@ export default function SettlementsScreen() {
       {/* Completely empty */}
       {pending.length === 0 && settled.length === 0 ? (
         <EmptyState message="No settlements yet." hint="Add expenses and split items first." />
+      ) : null}
+
+      {/* Weekly reminder */}
+      {pending.length > 0 ? (
+        <Pressable
+          className="mx-4 mb-6 mt-4 min-h-[44px] items-center justify-center rounded-xl border border-blue-200 bg-blue-50"
+          onPress={handleSetReminder}
+          accessibilityRole="button"
+          accessibilityLabel="Set weekly settlement reminder"
+        >
+          <Text className="text-sm font-semibold text-blue-600">🔔 Remind me weekly</Text>
+        </Pressable>
       ) : null}
     </ScrollView>
   )

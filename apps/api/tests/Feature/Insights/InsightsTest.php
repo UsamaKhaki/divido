@@ -5,9 +5,10 @@ use App\Models\ExpenseItem;
 use App\Models\Group;
 use App\Models\ItemSplit;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-uses(TestCase::class, \Illuminate\Foundation\Testing\RefreshDatabase::class);
+uses(TestCase::class, RefreshDatabase::class);
 
 describe('GET /api/v1/groups/{group}/insights', function () {
 
@@ -27,9 +28,9 @@ describe('GET /api/v1/groups/{group}/insights', function () {
     });
 
     it('returns 403 when user is not a group member', function () {
-        $owner    = User::factory()->create();
+        $owner = User::factory()->create();
         $outsider = User::factory()->create();
-        $group    = Group::factory()
+        $group = Group::factory()
             ->hasAttached([$owner], [], 'members')
             ->create(['created_by' => $owner->id]);
 
@@ -39,7 +40,7 @@ describe('GET /api/v1/groups/{group}/insights', function () {
     });
 
     it('returns zeroed insights for a group with no expenses', function () {
-        $user  = User::factory()->create();
+        $user = User::factory()->create();
         $group = Group::factory()
             ->hasAttached([$user], [], 'members')
             ->create(['created_by' => $user->id]);
@@ -53,7 +54,7 @@ describe('GET /api/v1/groups/{group}/insights', function () {
     });
 
     it('returns correct total_group_spend', function () {
-        $user  = User::factory()->create();
+        $user = User::factory()->create();
         $group = Group::factory()
             ->hasAttached([$user], [], 'members')
             ->create(['created_by' => $user->id]);
@@ -68,7 +69,7 @@ describe('GET /api/v1/groups/{group}/insights', function () {
     });
 
     it('returns correct category_breakdown', function () {
-        $user  = User::factory()->create();
+        $user = User::factory()->create();
         $group = Group::factory()
             ->hasAttached([$user], [], 'members')
             ->create(['created_by' => $user->id]);
@@ -83,7 +84,7 @@ describe('GET /api/v1/groups/{group}/insights', function () {
 
         $breakdown = collect($response->json('data.category_breakdown'));
 
-        $food      = $breakdown->firstWhere('category', 'food');
+        $food = $breakdown->firstWhere('category', 'food');
         $transport = $breakdown->firstWhere('category', 'transport');
 
         expect($food['total'])->toEqual(200)
@@ -98,16 +99,16 @@ describe('GET /api/v1/groups/{group}/insights', function () {
             ->create(['created_by' => $user1->id]);
 
         $expense = Expense::factory()->create([
-            'group_id'     => $group->id,
-            'paid_by'      => $user1->id,
+            'group_id' => $group->id,
+            'paid_by' => $user1->id,
             'total_amount' => 300,
-            'category'     => 'food',
+            'category' => 'food',
         ]);
 
         $item = ExpenseItem::factory()->create([
             'expense_id' => $expense->id,
-            'price'      => 300,
-            'quantity'   => 1,
+            'price' => 300,
+            'quantity' => 1,
         ]);
 
         ItemSplit::factory()->create(['expense_item_id' => $item->id, 'user_id' => $user1->id, 'amount' => 200]);
@@ -120,16 +121,16 @@ describe('GET /api/v1/groups/{group}/insights', function () {
         $spentPerUser = collect($response->json('data.spent_per_user'));
 
         $alice = $spentPerUser->firstWhere('user.name', 'Alice');
-        $bob   = $spentPerUser->firstWhere('user.name', 'Bob');
+        $bob = $spentPerUser->firstWhere('user.name', 'Bob');
 
         expect($alice['total'])->toEqual(200)
             ->and($bob['total'])->toEqual(100);
     });
 
     it('does not include expenses from other groups', function () {
-        $user        = User::factory()->create();
-        $group       = Group::factory()->hasAttached([$user], [], 'members')->create(['created_by' => $user->id]);
-        $otherGroup  = Group::factory()->hasAttached([$user], [], 'members')->create(['created_by' => $user->id]);
+        $user = User::factory()->create();
+        $group = Group::factory()->hasAttached([$user], [], 'members')->create(['created_by' => $user->id]);
+        $otherGroup = Group::factory()->hasAttached([$user], [], 'members')->create(['created_by' => $user->id]);
 
         Expense::factory()->create(['group_id' => $group->id,      'paid_by' => $user->id, 'total_amount' => 100, 'category' => 'food']);
         Expense::factory()->create(['group_id' => $otherGroup->id, 'paid_by' => $user->id, 'total_amount' => 999, 'category' => 'food']);

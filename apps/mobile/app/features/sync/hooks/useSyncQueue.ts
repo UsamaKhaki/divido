@@ -14,6 +14,7 @@ import { useEffect, useRef } from 'react'
 import { useSyncQueueStore } from '../store/syncQueueStore'
 
 import { expensesApi } from '@/features/expenses/services/expensesApi'
+import { settlementsApi } from '@/features/settlements/services/settlementsApi'
 import type { CreateExpenseRequest, UpdateSplitsRequest } from '@/types/api.types'
 
 export const useSyncQueue = () => {
@@ -41,8 +42,9 @@ export const useSyncQueue = () => {
       for (const op of [...queue]) {
         try {
           if (op.type === 'create_expense') {
-            const expense = await expensesApi.create(op.payload as CreateExpenseRequest)
-            void queryClient.invalidateQueries({ queryKey: ['expenses', expense.group_id] })
+            const payload = op.payload as CreateExpenseRequest
+            await expensesApi.create(payload)
+            void queryClient.invalidateQueries({ queryKey: ['expenses', payload.group_id] })
           } else if (op.type === 'update_splits') {
             const { expenseId, itemId, payload } = op.payload as {
               expenseId: number
@@ -51,11 +53,26 @@ export const useSyncQueue = () => {
             }
             await expensesApi.updateSplits(expenseId, itemId, payload)
             void queryClient.invalidateQueries({ queryKey: ['expense', expenseId] })
+          } else if (op.type === 'settle') {
+            const { settlementId, groupId } = op.payload as {
+              settlementId: number
+              groupId: number
+            }
+            await settlementsApi.settle(settlementId)
+            void queryClient.invalidateQueries({ queryKey: ['settlements', groupId] })
           }
           dequeue(op.id)
-        } catch {
-          // Leave the op in the queue — it will be retried on next reconnect
-          break
+        } catch (error) {
+          const status = (error as { response?: { status?: number } })?.response?.status
+          if (status !== undefined && status >= 400 && status < 500) {
+            // 4xx: server rejected the op (conflict / already settled / deleted)
+            // Server wins — drop this operation and refresh all stale data.
+            dequeue(op.id)
+            void queryClient.invalidateQueries()
+          } else {
+            // Network or 5xx error — stop draining, retry on next reconnect.
+            break
+          }
         }
       }
     })

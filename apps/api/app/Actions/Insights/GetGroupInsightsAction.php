@@ -21,7 +21,7 @@ class GetGroupInsightsAction
 
         $spentPerUser = $this->repo->getSpentPerUser($groupId)
             ->map(fn ($row) => [
-                'user'  => ['id' => $row->user_id, 'name' => $row->user_name],
+                'user' => ['id' => $row->user_id, 'name' => $row->user_name],
                 'total' => (float) round($row->total, 2),
             ])
             ->values()
@@ -30,14 +30,14 @@ class GetGroupInsightsAction
         $categoryBreakdown = $this->repo->getCategoryBreakdown($groupId)
             ->map(fn ($row) => [
                 'category' => $row->category,
-                'total'    => (float) round($row->total, 2),
+                'total' => (float) round($row->total, 2),
             ])
             ->values()
             ->all();
 
         return [
-            'total_group_spend'  => round($totalGroupSpend, 2),
-            'spent_per_user'     => $spentPerUser,
+            'total_group_spend' => round($totalGroupSpend, 2),
+            'spent_per_user' => $spentPerUser,
             'category_breakdown' => $categoryBreakdown,
         ];
     }

@@ -1,6 +1,15 @@
 import { router, useLocalSearchParams, useNavigation } from 'expo-router'
 import { useEffect, useReducer } from 'react'
-import { ActivityIndicator, Alert, Pressable, ScrollView, Share, Text, View } from 'react-native'
+import {
+  ActivityIndicator,
+  Alert,
+  Linking,
+  Pressable,
+  ScrollView,
+  Share,
+  Text,
+  View,
+} from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { ErrorState } from '@/components/ErrorState'
@@ -135,7 +144,14 @@ export default function ExpenseDetailScreen() {
 
   const handleShare = async () => {
     if (!summary) return
-    await Share.share({ message: summary.summary })
+    const text = summary.summary
+    const whatsappUrl = `whatsapp://send?text=${encodeURIComponent(text)}`
+    const canOpen = await Linking.canOpenURL(whatsappUrl)
+    if (canOpen) {
+      await Linking.openURL(whatsappUrl)
+    } else {
+      await Share.share({ message: text })
+    }
   }
 
   const handleDelete = () => {
@@ -271,12 +287,12 @@ export default function ExpenseDetailScreen() {
           </Pressable>
           {summary ? (
             <Pressable
-              className="flex-1 min-h-[44px] items-center justify-center rounded-xl bg-gray-900"
+              className="flex-1 min-h-[44px] items-center justify-center rounded-xl bg-green-600"
               onPress={() => void handleShare()}
               accessibilityRole="button"
-              accessibilityLabel="Share expense summary"
+              accessibilityLabel="Share via WhatsApp"
             >
-              <Text className="text-sm font-semibold text-white">Share</Text>
+              <Text className="text-sm font-semibold text-white">📲 WhatsApp</Text>
             </Pressable>
           ) : null}
         </View>
