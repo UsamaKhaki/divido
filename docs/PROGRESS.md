@@ -79,9 +79,9 @@
 - [x] OCR service: `ocrService.ts` (Apple Vision, on-device)
 - [x] OCR fallback service: `ocrFallbackService.ts` (Google Vision via API proxy)
 - [x] `useOcrScan` hook
-- [x] Scan Receipt screen (`app/(app)/groups/[groupId]/scan-receipt.tsx`)
-- [x] Review Receipt screen (`app/(app)/groups/[groupId]/review-receipt.tsx`)
-- [ ] Camera capture UI — verify end-to-end real device test <!-- #TODO: open GitHub Issue -->
+- [x] Scan Receipt screen — real camera capture via `CameraCapture` component (`app/(app)/groups/[groupId]/scan-receipt.tsx`)
+- [x] Review Receipt screen — editable item rows with inline name/price/quantity inputs (`app/(app)/groups/[groupId]/review-receipt.tsx`)
+- [ ] Camera capture — end-to-end real device test <!-- #TODO: open GitHub Issue -->
 - [ ] Low-confidence fallback flow — verify Google Vision fallback triggers correctly <!-- #TODO: open GitHub Issue -->
 
 ---
@@ -97,7 +97,7 @@
 
 ### Mobile
 - [x] Suggestions service + hook: `useGroupSuggestionsQuery`
-- [ ] Suggestions UI — wire up to Add Expense screen (auto-suggest users per item) <!-- #TODO: open GitHub Issue -->
+- [x] Suggestions UI — wired to Add Expense screen; shows `"Usually: Ali, Zara"` hints inline per item
 - [ ] Reminder scheduling (push notifications) <!-- #TODO: open GitHub Issue -->
 - [ ] WhatsApp share button on settlement/summary screen <!-- #TODO: open GitHub Issue -->
 
@@ -112,14 +112,14 @@
 
 ### Mobile
 - [x] Insights service + hook: `useGroupInsightsQuery`
-- [x] Insights screen (`app/(app)/groups/[groupId]/insights.tsx`)
-- [x] Sync queue store (`features/sync/store/syncQueueStore.ts`)
-- [x] `useSyncQueue` hook scaffolded
-- [x] Local DB service scaffolded (`features/sync/services/localDb.ts`)
-- [ ] SQLite — full offline read/write integration <!-- #TODO: open GitHub Issue -->
+- [x] Insights screen — functional with text + custom `PercentBar` progress bars (`app/(app)/groups/[groupId]/insights.tsx`)
+- [x] Sync queue store — real Zustand + `immer` + `persist` implementation with `enqueue/dequeue` (`features/sync/store/syncQueueStore.ts`)
+- [x] `useSyncQueue` hook implemented
+- [x] Local DB service — real `expo-sqlite` implementation with `upsertGroups`, `upsertExpenses`, `getGroups` using INSERT ON CONFLICT (`features/sync/services/localDb.ts`)
+- [ ] SQLite — wire offline DB to all screens (replace API calls with local reads when offline) <!-- #TODO: open GitHub Issue -->
 - [ ] Sync queue — process pending actions on reconnect <!-- #TODO: open GitHub Issue -->
 - [ ] Conflict resolution logic <!-- #TODO: open GitHub Issue -->
-- [ ] Insights charts — wire up chart library to InsightsScreen data <!-- #TODO: open GitHub Issue -->
+- [ ] Insights charts — replace PercentBar with a real chart library (Victory Native or similar) <!-- #TODO: open GitHub Issue -->
 - [ ] UI polish pass — consistent spacing, typography, transitions <!-- #TODO: open GitHub Issue -->
 
 ---
@@ -134,9 +134,11 @@
 - [x] Laravel Pint configured (backend)
 - [x] All routes versioned under `/api/v1/`
 - [x] 4-state screen pattern (loading → error → empty → data) via shared components
-- [ ] Swagger annotations — verify all endpoints are annotated <!-- #TODO: open GitHub Issue -->
+- [x] Swagger/OpenAPI annotations — all controllers annotated (`#[OA\Post]`, `#[OA\Get]`, etc.) with security scheme
+- [x] Model factories for all models (User, Group, Expense, ExpenseItem, ItemSplit, Settlement)
+- [x] `.env.example` — backend (`apps/api/.env.example`)
+- [ ] `.env.example` — mobile (`apps/mobile/.env.example` with `EXPO_PUBLIC_API_URL`) <!-- #TODO: open GitHub Issue -->
 - [ ] CI — GitHub Actions: run Pest tests + lint on every push <!-- #TODO: open GitHub Issue -->
-- [ ] Environment setup docs (`.env.example` for both apps) <!-- #TODO: open GitHub Issue -->
 
 ---
 
@@ -146,6 +148,6 @@
 |---|---|---|
 | Phase 1 (Auth + Groups) | ✅ Done | ✅ Done |
 | Phase 2 (Expenses + Settlements) | ✅ Done | ✅ Done |
-| Phase 3 (OCR) | ✅ Done | ⚠️ Needs real-device verification |
-| Phase 4 (Suggestions + Sharing) | ⚠️ Partial | ⚠️ Partial |
-| Phase 5 (Offline + Insights) | ✅ Done | ⚠️ Scaffolded, not complete |
+| Phase 3 (OCR) | ✅ Done | ✅ Done (needs real-device test) |
+| Phase 4 (Suggestions + Sharing) | ⚠️ Partial — reminders + WhatsApp missing | ⚠️ Partial — suggestions wired, reminders + WhatsApp UI missing |
+| Phase 5 (Offline + Insights) | ✅ Done | ⚠️ SQLite + queue implemented, not wired to screens; charts missing |
