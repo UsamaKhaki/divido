@@ -13,7 +13,7 @@ class DeleteExpenseAction
     public function execute(Expense $expense, int $userId): void
     {
         if ($expense->paid_by !== $userId) {
-            throw new NotExpenseCreatorException();
+            throw new NotExpenseCreatorException;
         }
 
         $this->repo->delete($expense);

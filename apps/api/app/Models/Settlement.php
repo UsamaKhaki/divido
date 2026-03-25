@@ -27,7 +27,7 @@ class Settlement extends Model
     ];
 
     protected $casts = [
-        'amount'     => 'decimal:2',
+        'amount' => 'decimal:2',
         'settled_at' => 'datetime',
     ];
 

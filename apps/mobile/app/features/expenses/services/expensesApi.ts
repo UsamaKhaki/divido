@@ -4,6 +4,7 @@ import type {
   CreateExpenseRequest,
   Expense,
   ExpenseSummary,
+  ExpenseSummaryShareResponse,
   PaginatedResponse,
   UpdateSplitsRequest,
   UpdateSplitsResponse,
@@ -31,4 +32,12 @@ export const expensesApi = {
         ApiResponse<UpdateSplitsResponse>
       >(`/expenses/${expenseId}/items/${itemId}/splits`, payload)
       .then((r) => r.data.data),
+
+  getSummary: (expenseId: number): Promise<ExpenseSummaryShareResponse> =>
+    api
+      .get<ApiResponse<ExpenseSummaryShareResponse>>(`/expenses/${expenseId}/summary`)
+      .then((r) => r.data.data),
+
+  delete: (expenseId: number): Promise<void> =>
+    api.delete(`/expenses/${expenseId}`).then(() => undefined),
 }

@@ -13,7 +13,6 @@ class LoginRequest extends FormRequest
 {
     #[OA\Property(property: 'email', type: 'string', format: 'email', example: 'usama@example.com')]
     #[OA\Property(property: 'password', type: 'string', format: 'password', example: 'secret123')]
-
     public function authorize(): bool
     {
         return true;
@@ -22,7 +21,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email'    => ['required', 'email'],
+            'email' => ['required', 'email'],
             'password' => ['required', 'string'],
         ];
     }

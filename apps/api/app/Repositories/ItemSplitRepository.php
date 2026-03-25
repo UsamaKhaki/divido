@@ -20,7 +20,7 @@ class ItemSplitRepository
         foreach ($splits as $split) {
             $item->splits()->create([
                 'user_id' => $split['user_id'],
-                'amount'  => $split['amount'],
+                'amount' => $split['amount'],
             ]);
         }
     }

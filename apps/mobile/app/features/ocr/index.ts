@@ -1,0 +1,6 @@
+export { CameraCapture } from './components/CameraCapture'
+export { useOcrScan } from './hooks/useOcrScan'
+export { ocrFallbackService } from './services/ocrFallbackService'
+export { ocrService } from './services/ocrService'
+export type { OcrResult, ParsedItem } from './types/ocr.types'
+export { parseReceiptText } from './utils/receiptParser'

@@ -13,10 +13,10 @@ class RemoveGroupMemberAction
     public function execute(Group $group, int $targetUserId, int $authUserId): void
     {
         $isCreator = $group->created_by === $authUserId;
-        $isSelf    = $targetUserId === $authUserId;
+        $isSelf = $targetUserId === $authUserId;
 
         if (! $isCreator && ! $isSelf) {
-            throw new NotGroupCreatorException();
+            throw new NotGroupCreatorException;
         }
 
         $this->repo->removeMember($group, $targetUserId);

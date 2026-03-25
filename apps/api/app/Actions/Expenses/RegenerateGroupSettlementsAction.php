@@ -8,7 +8,7 @@ use App\Repositories\SettlementRepository;
 class RegenerateGroupSettlementsAction
 {
     public function __construct(
-        private ItemSplitRepository  $splitRepo,
+        private ItemSplitRepository $splitRepo,
         private SettlementRepository $settlementRepo,
     ) {}
 
@@ -21,18 +21,18 @@ class RegenerateGroupSettlementsAction
 
         foreach ($splits as $split) {
             $payerId = $split->expenseItem->expense->paid_by;
-            $userId  = $split->user_id;
-            $amount  = (float) $split->amount;
+            $userId = $split->user_id;
+            $amount = (float) $split->amount;
 
             if ($userId !== $payerId) {
-                $balances[$userId]  = ($balances[$userId]  ?? 0.0) - $amount;
+                $balances[$userId] = ($balances[$userId] ?? 0.0) - $amount;
                 $balances[$payerId] = ($balances[$payerId] ?? 0.0) + $amount;
             }
         }
 
         // Separate into creditors (owed money) and debtors (owe money)
         $creditors = [];
-        $debtors   = [];
+        $debtors = [];
 
         foreach ($balances as $userId => $balance) {
             if ($balance > 0.005) {
@@ -50,18 +50,18 @@ class RegenerateGroupSettlementsAction
 
         while ($ci < count($creditors) && $di < count($debtors)) {
             $credit = $creditors[$ci]['amount'];
-            $debt   = $debtors[$di]['amount'];
+            $debt = $debtors[$di]['amount'];
 
             $settled = min($credit, $debt);
 
             $newSettlements[] = [
                 'from_user' => $debtors[$di]['user_id'],
-                'to_user'   => $creditors[$ci]['user_id'],
-                'amount'    => round($settled, 2),
+                'to_user' => $creditors[$ci]['user_id'],
+                'amount' => round($settled, 2),
             ];
 
             $creditors[$ci]['amount'] -= $settled;
-            $debtors[$di]['amount']   -= $settled;
+            $debtors[$di]['amount'] -= $settled;
 
             if ($creditors[$ci]['amount'] < 0.005) {
                 $ci++;

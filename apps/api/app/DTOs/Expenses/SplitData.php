@@ -10,7 +10,7 @@ class SplitData
      * @param array<int, array{user_id: int, amount: float}> $splits
      */
     public function __construct(
-        public readonly int   $expenseItemId,
+        public readonly int $expenseItemId,
         public readonly array $splits,
     ) {}
 
@@ -18,7 +18,7 @@ class SplitData
     {
         return new self(
             expenseItemId: $itemId,
-            splits:        $request->array('splits'),
+            splits: $request->array('splits'),
         );
     }
 }

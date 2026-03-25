@@ -13,7 +13,7 @@ class DeleteGroupAction
     public function execute(Group $group, int $userId): void
     {
         if ($group->created_by !== $userId) {
-            throw new NotGroupCreatorException();
+            throw new NotGroupCreatorException;
         }
 
         $this->repo->delete($group);

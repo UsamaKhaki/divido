@@ -2,14 +2,15 @@
 
 use App\Models\Group;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-uses(TestCase::class, \Illuminate\Foundation\Testing\RefreshDatabase::class);
+uses(TestCase::class, RefreshDatabase::class);
 
 describe('GET /api/v1/groups', function () {
 
     it('returns groups the user belongs to', function () {
-        $user  = User::factory()->create();
+        $user = User::factory()->create();
         $group = Group::factory()->create(['created_by' => $user->id]);
         $group->members()->attach($user->id);
 
@@ -63,7 +64,7 @@ describe('POST /api/v1/groups', function () {
 describe('GET /api/v1/groups/{group}', function () {
 
     it('returns group details for a member', function () {
-        $user  = User::factory()->create();
+        $user = User::factory()->create();
         $group = Group::factory()->create(['created_by' => $user->id]);
         $group->members()->attach($user->id);
 
@@ -75,7 +76,7 @@ describe('GET /api/v1/groups/{group}', function () {
     });
 
     it('returns 403 when not a member', function () {
-        $user  = User::factory()->create();
+        $user = User::factory()->create();
         $group = Group::factory()->create();
 
         $this->actingAs($user)
@@ -100,7 +101,7 @@ describe('GET /api/v1/groups/{group}', function () {
 describe('DELETE /api/v1/groups/{group}', function () {
 
     it('allows creator to delete the group', function () {
-        $user  = User::factory()->create();
+        $user = User::factory()->create();
         $group = Group::factory()->create(['created_by' => $user->id]);
         $group->members()->attach($user->id);
 
@@ -114,8 +115,8 @@ describe('DELETE /api/v1/groups/{group}', function () {
 
     it('returns 403 when not the creator', function () {
         $creator = User::factory()->create();
-        $other   = User::factory()->create();
-        $group   = Group::factory()->create(['created_by' => $creator->id]);
+        $other = User::factory()->create();
+        $group = Group::factory()->create(['created_by' => $creator->id]);
         $group->members()->attach([$creator->id, $other->id]);
 
         $this->actingAs($other)

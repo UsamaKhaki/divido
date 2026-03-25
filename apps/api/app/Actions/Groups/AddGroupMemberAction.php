@@ -17,7 +17,7 @@ class AddGroupMemberAction
         $user = User::where('email', $data->email)->firstOrFail();
 
         if ($this->repo->isMember($group, $user->id)) {
-            throw new UserAlreadyMemberException();
+            throw new UserAlreadyMemberException;
         }
 
         $this->repo->addMember($group, $user);

@@ -15,7 +15,6 @@ class RegisterRequest extends FormRequest
     #[OA\Property(property: 'email', type: 'string', format: 'email', example: 'usama@example.com')]
     #[OA\Property(property: 'password', type: 'string', format: 'password', example: 'secret123')]
     #[OA\Property(property: 'password_confirmation', type: 'string', format: 'password', example: 'secret123')]
-
     public function authorize(): bool
     {
         return true;
@@ -24,9 +23,9 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'                  => ['required', 'string', 'max:255'],
-            'email'                 => ['required', 'email', 'max:255', 'unique:users,email'],
-            'password'              => ['required', 'string', 'min:8', 'confirmed'],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
             'password_confirmation' => ['required', 'string'],
         ];
     }

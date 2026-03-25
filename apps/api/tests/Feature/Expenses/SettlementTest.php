@@ -6,16 +6,17 @@ use App\Models\Group;
 use App\Models\ItemSplit;
 use App\Models\Settlement;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-uses(TestCase::class, \Illuminate\Foundation\Testing\RefreshDatabase::class);
+uses(TestCase::class, RefreshDatabase::class);
 
 // Helper: create a group with splits so settlements can be generated
 function setupGroupWithSplits(User $payer, User $debtor, float $splitAmount = 300.00): array
 {
-    $group   = Group::factory()->hasAttached([$payer, $debtor], [], 'members')->create(['created_by' => $payer->id]);
+    $group = Group::factory()->hasAttached([$payer, $debtor], [], 'members')->create(['created_by' => $payer->id]);
     $expense = Expense::factory()->create(['group_id' => $group->id, 'paid_by' => $payer->id]);
-    $item    = ExpenseItem::factory()->create(['expense_id' => $expense->id, 'price' => $splitAmount * 2, 'quantity' => 1]);
+    $item = ExpenseItem::factory()->create(['expense_id' => $expense->id, 'price' => $splitAmount * 2, 'quantity' => 1]);
 
     // Create splits directly
     ItemSplit::create(['expense_item_id' => $item->id, 'user_id' => $payer->id,  'amount' => $splitAmount]);
@@ -23,11 +24,11 @@ function setupGroupWithSplits(User $payer, User $debtor, float $splitAmount = 30
 
     // Create a pending settlement manually
     $settlement = Settlement::create([
-        'group_id'  => $group->id,
+        'group_id' => $group->id,
         'from_user' => $debtor->id,
-        'to_user'   => $payer->id,
-        'amount'    => $splitAmount,
-        'status'    => 'pending',
+        'to_user' => $payer->id,
+        'amount' => $splitAmount,
+        'status' => 'pending',
     ]);
 
     return compact('group', 'expense', 'item', 'settlement');
@@ -36,9 +37,9 @@ function setupGroupWithSplits(User $payer, User $debtor, float $splitAmount = 30
 describe('GET /api/v1/groups/{group}/settlements', function () {
 
     it('returns the settlement plan for the group', function () {
-        $payer  = User::factory()->create();
+        $payer = User::factory()->create();
         $debtor = User::factory()->create();
-        $data   = setupGroupWithSplits($payer, $debtor, 300.00);
+        $data = setupGroupWithSplits($payer, $debtor, 300.00);
 
         $response = $this->actingAs($payer)
             ->getJson("/api/v1/groups/{$data['group']->id}/settlements");
@@ -55,10 +56,10 @@ describe('GET /api/v1/groups/{group}/settlements', function () {
     });
 
     it('returns 403 when not a group member', function () {
-        $payer   = User::factory()->create();
-        $debtor  = User::factory()->create();
+        $payer = User::factory()->create();
+        $debtor = User::factory()->create();
         $outsider = User::factory()->create();
-        $data    = setupGroupWithSplits($payer, $debtor);
+        $data = setupGroupWithSplits($payer, $debtor);
 
         $this->actingAs($outsider)
             ->getJson("/api/v1/groups/{$data['group']->id}/settlements")
@@ -78,7 +79,7 @@ describe('GET /api/v1/groups/{group}/settlements', function () {
     });
 
     it('returns empty settlements list for a new group', function () {
-        $user  = User::factory()->create();
+        $user = User::factory()->create();
         $group = Group::factory()->hasAttached($user, [], 'members')->create(['created_by' => $user->id]);
 
         $this->actingAs($user)
@@ -92,9 +93,9 @@ describe('GET /api/v1/groups/{group}/settlements', function () {
 describe('POST /api/v1/settlements/{settlement}/settle', function () {
 
     it('marks a settlement as paid', function () {
-        $payer  = User::factory()->create();
+        $payer = User::factory()->create();
         $debtor = User::factory()->create();
-        $data   = setupGroupWithSplits($payer, $debtor, 300.00);
+        $data = setupGroupWithSplits($payer, $debtor, 300.00);
 
         $response = $this->actingAs($debtor)
             ->postJson("/api/v1/settlements/{$data['settlement']->id}/settle");
@@ -104,16 +105,16 @@ describe('POST /api/v1/settlements/{settlement}/settle', function () {
             ->assertJsonPath('data.status', 'settled');
 
         $this->assertDatabaseHas('settlements', [
-            'id'     => $data['settlement']->id,
+            'id' => $data['settlement']->id,
             'status' => 'settled',
         ]);
     });
 
     it('returns 403 when requester is not the payer', function () {
-        $payer    = User::factory()->create();
-        $debtor   = User::factory()->create();
+        $payer = User::factory()->create();
+        $debtor = User::factory()->create();
         $outsider = User::factory()->create();
-        $data     = setupGroupWithSplits($payer, $debtor);
+        $data = setupGroupWithSplits($payer, $debtor);
 
         $this->actingAs($outsider)
             ->postJson("/api/v1/settlements/{$data['settlement']->id}/settle")
@@ -121,9 +122,9 @@ describe('POST /api/v1/settlements/{settlement}/settle', function () {
     });
 
     it('returns 403 when the creditor tries to settle (not the debtor)', function () {
-        $payer  = User::factory()->create();
+        $payer = User::factory()->create();
         $debtor = User::factory()->create();
-        $data   = setupGroupWithSplits($payer, $debtor);
+        $data = setupGroupWithSplits($payer, $debtor);
 
         // payer is the *to_user*, not the from_user — should be 403
         $this->actingAs($payer)
@@ -132,9 +133,9 @@ describe('POST /api/v1/settlements/{settlement}/settle', function () {
     });
 
     it('returns 422 when settlement is already settled', function () {
-        $payer  = User::factory()->create();
+        $payer = User::factory()->create();
         $debtor = User::factory()->create();
-        $data   = setupGroupWithSplits($payer, $debtor);
+        $data = setupGroupWithSplits($payer, $debtor);
 
         // Settle it once
         $this->actingAs($debtor)

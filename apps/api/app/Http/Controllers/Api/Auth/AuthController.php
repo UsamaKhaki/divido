@@ -9,6 +9,7 @@ use App\Http\Helpers\ApiResponse;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\Auth\UserResource;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,7 +34,7 @@ class AuthController extends Controller
 
         return ApiResponse::created([
             'token' => $result['token'],
-            'user'  => new UserResource($result['user']),
+            'user' => new UserResource($result['user']),
         ], 'Account created successfully.');
     }
 
@@ -55,13 +56,13 @@ class AuthController extends Controller
             return response()->json(['message' => 'Invalid credentials.'], 401);
         }
 
-        /** @var \App\Models\User $user */
-        $user  = Auth::user();
+        /** @var User $user */
+        $user = Auth::user();
         $token = $user->createToken('api')->plainTextToken;
 
         return ApiResponse::ok([
             'token' => $token,
-            'user'  => new UserResource($user),
+            'user' => new UserResource($user),
         ], 'Logged in successfully.');
     }
 

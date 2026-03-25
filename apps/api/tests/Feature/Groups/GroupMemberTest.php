@@ -2,16 +2,17 @@
 
 use App\Models\Group;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-uses(TestCase::class, \Illuminate\Foundation\Testing\RefreshDatabase::class);
+uses(TestCase::class, RefreshDatabase::class);
 
 describe('POST /api/v1/groups/{group}/members', function () {
 
     it('adds a member to the group by email', function () {
         $creator = User::factory()->create();
         $newUser = User::factory()->create();
-        $group   = Group::factory()->create(['created_by' => $creator->id]);
+        $group = Group::factory()->create(['created_by' => $creator->id]);
         $group->members()->attach($creator->id);
 
         $this->actingAs($creator)
@@ -25,7 +26,7 @@ describe('POST /api/v1/groups/{group}/members', function () {
 
     it('returns 422 when user is already a member', function () {
         $creator = User::factory()->create();
-        $group   = Group::factory()->create(['created_by' => $creator->id]);
+        $group = Group::factory()->create(['created_by' => $creator->id]);
         $group->members()->attach($creator->id);
 
         $this->actingAs($creator)
@@ -35,7 +36,7 @@ describe('POST /api/v1/groups/{group}/members', function () {
 
     it('returns 422 when email does not exist', function () {
         $creator = User::factory()->create();
-        $group   = Group::factory()->create(['created_by' => $creator->id]);
+        $group = Group::factory()->create(['created_by' => $creator->id]);
         $group->members()->attach($creator->id);
 
         $this->actingAs($creator)
@@ -46,8 +47,8 @@ describe('POST /api/v1/groups/{group}/members', function () {
 
     it('returns 403 when requester is not a member', function () {
         $stranger = User::factory()->create();
-        $newUser  = User::factory()->create();
-        $group    = Group::factory()->create();
+        $newUser = User::factory()->create();
+        $group = Group::factory()->create();
 
         $this->actingAs($stranger)
             ->postJson("/api/v1/groups/{$group->id}/members", ['email' => $newUser->email])
@@ -55,7 +56,7 @@ describe('POST /api/v1/groups/{group}/members', function () {
     });
 
     it('returns 404 when group does not exist', function () {
-        $user    = User::factory()->create();
+        $user = User::factory()->create();
         $newUser = User::factory()->create();
 
         $this->actingAs($user)
@@ -69,8 +70,8 @@ describe('DELETE /api/v1/groups/{group}/members/{user}', function () {
 
     it('allows creator to remove another member', function () {
         $creator = User::factory()->create();
-        $member  = User::factory()->create();
-        $group   = Group::factory()->create(['created_by' => $creator->id]);
+        $member = User::factory()->create();
+        $group = Group::factory()->create(['created_by' => $creator->id]);
         $group->members()->attach([$creator->id, $member->id]);
 
         $this->actingAs($creator)
@@ -83,8 +84,8 @@ describe('DELETE /api/v1/groups/{group}/members/{user}', function () {
 
     it('allows a member to remove themselves', function () {
         $creator = User::factory()->create();
-        $member  = User::factory()->create();
-        $group   = Group::factory()->create(['created_by' => $creator->id]);
+        $member = User::factory()->create();
+        $group = Group::factory()->create(['created_by' => $creator->id]);
         $group->members()->attach([$creator->id, $member->id]);
 
         $this->actingAs($member)
@@ -96,7 +97,7 @@ describe('DELETE /api/v1/groups/{group}/members/{user}', function () {
         $creator = User::factory()->create();
         $member1 = User::factory()->create();
         $member2 = User::factory()->create();
-        $group   = Group::factory()->create(['created_by' => $creator->id]);
+        $group = Group::factory()->create(['created_by' => $creator->id]);
         $group->members()->attach([$creator->id, $member1->id, $member2->id]);
 
         $this->actingAs($member1)

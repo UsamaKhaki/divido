@@ -15,9 +15,9 @@ class ExpenseItemFactory extends Factory
     {
         return [
             'expense_id' => Expense::factory(),
-            'name'       => $this->faker->word(),
-            'price'      => $this->faker->randomFloat(2, 1, 1000),
-            'quantity'   => $this->faker->numberBetween(1, 5),
+            'name' => $this->faker->word(),
+            'price' => $this->faker->randomFloat(2, 1, 1000),
+            'quantity' => $this->faker->numberBetween(1, 5),
         ];
     }
 }

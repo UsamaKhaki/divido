@@ -35,11 +35,11 @@ class SettlementRepository
 
         foreach ($settlements as $s) {
             Settlement::create([
-                'group_id'  => $groupId,
+                'group_id' => $groupId,
                 'from_user' => $s['from_user'],
-                'to_user'   => $s['to_user'],
-                'amount'    => $s['amount'],
-                'status'    => 'pending',
+                'to_user' => $s['to_user'],
+                'amount' => $s['amount'],
+                'status' => 'pending',
             ]);
         }
     }
@@ -47,7 +47,7 @@ class SettlementRepository
     public function markSettled(Settlement $settlement): Settlement
     {
         $settlement->update([
-            'status'     => 'settled',
+            'status' => 'settled',
             'settled_at' => Carbon::now(),
         ]);
 

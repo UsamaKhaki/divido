@@ -14,14 +14,13 @@ class GroupResource extends JsonResource
     #[OA\Property(property: 'name', type: 'string')]
     #[OA\Property(property: 'created_by', type: 'integer')]
     #[OA\Property(property: 'created_at', type: 'string', format: 'date-time')]
-
     public function toArray(Request $request): array
     {
         return [
-            'id'         => $this->id,
-            'name'       => $this->name,
+            'id' => $this->id,
+            'name' => $this->name,
             'created_by' => $this->created_by,
-            'members'    => UserResource::collection($this->whenLoaded('members')),
+            'members' => UserResource::collection($this->whenLoaded('members')),
             'created_at' => $this->created_at->toISOString(),
         ];
     }

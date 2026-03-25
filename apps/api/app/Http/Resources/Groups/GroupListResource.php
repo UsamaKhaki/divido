@@ -14,15 +14,14 @@ class GroupListResource extends JsonResource
     #[OA\Property(property: 'created_by', type: 'integer')]
     #[OA\Property(property: 'member_count', type: 'integer')]
     #[OA\Property(property: 'created_at', type: 'string', format: 'date-time')]
-
     public function toArray(Request $request): array
     {
         return [
-            'id'           => $this->id,
-            'name'         => $this->name,
-            'created_by'   => $this->created_by,
+            'id' => $this->id,
+            'name' => $this->name,
+            'created_by' => $this->created_by,
             'member_count' => $this->members_count ?? 0,
-            'created_at'   => $this->created_at->toISOString(),
+            'created_at' => $this->created_at->toISOString(),
         ];
     }
 }

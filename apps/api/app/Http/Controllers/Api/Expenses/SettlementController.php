@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\Expenses;
 
 use App\Actions\Expenses\MarkSettlementPaidAction;
-use App\Http\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\ApiResponse;
 use App\Http\Resources\Expenses\SettlementResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -29,7 +29,7 @@ class SettlementController extends Controller
 
         return ApiResponse::ok(
             new SettlementResource($result),
-            'Settlement marked as paid.'
+            'Settlement marked as paid.',
         );
     }
 }

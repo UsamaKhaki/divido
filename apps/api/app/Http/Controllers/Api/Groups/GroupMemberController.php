@@ -40,7 +40,7 @@ class GroupMemberController extends Controller
         $group = $this->repo->findById($groupId);
 
         if (! $group) {
-            throw new GroupNotFoundException();
+            throw new GroupNotFoundException;
         }
 
         $user = $action->execute($group, AddMemberData::fromRequest($request));
@@ -64,11 +64,11 @@ class GroupMemberController extends Controller
         $group = $this->repo->findById($groupId);
 
         if (! $group) {
-            throw new GroupNotFoundException();
+            throw new GroupNotFoundException;
         }
 
         if (! $this->repo->isMember($group, $request->user()->id)) {
-            throw new NotGroupMemberException();
+            throw new NotGroupMemberException;
         }
 
         $action->execute($group, $userId, $request->user()->id);

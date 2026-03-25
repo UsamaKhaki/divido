@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Groups;
 
+use App\Models\Group;
 use App\Repositories\GroupRepository;
 use Illuminate\Foundation\Http\FormRequest;
 use OpenApi\Attributes as OA;
@@ -13,7 +14,6 @@ use OpenApi\Attributes as OA;
 class AddMemberRequest extends FormRequest
 {
     #[OA\Property(property: 'email', type: 'string', format: 'email', example: 'waqas@example.com')]
-
     public function authorize(): bool
     {
         $groupParam = $this->route('group');
@@ -22,8 +22,8 @@ class AddMemberRequest extends FormRequest
             return false;
         }
 
-        $repo  = app(GroupRepository::class);
-        $group = $groupParam instanceof \App\Models\Group
+        $repo = app(GroupRepository::class);
+        $group = $groupParam instanceof Group
             ? $groupParam
             : $repo->findById((int) $groupParam);
 

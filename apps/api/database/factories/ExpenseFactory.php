@@ -15,11 +15,11 @@ class ExpenseFactory extends Factory
     public function definition(): array
     {
         return [
-            'group_id'     => Group::factory(),
-            'paid_by'      => User::factory(),
-            'title'        => $this->faker->words(3, true),
+            'group_id' => Group::factory(),
+            'paid_by' => User::factory(),
+            'title' => $this->faker->words(3, true),
             'total_amount' => $this->faker->randomFloat(2, 10, 5000),
-            'category'     => $this->faker->randomElement(['food', 'transport', 'accommodation', 'entertainment', 'shopping', 'other']),
+            'category' => $this->faker->randomElement(['food', 'transport', 'accommodation', 'entertainment', 'shopping', 'other']),
         ];
     }
 }

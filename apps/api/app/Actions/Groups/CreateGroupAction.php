@@ -13,7 +13,7 @@ class CreateGroupAction
     public function execute(GroupData $data): Group
     {
         $group = $this->repo->create([
-            'name'       => $data->name,
+            'name' => $data->name,
             'created_by' => $data->createdBy,
         ]);
 

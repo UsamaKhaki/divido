@@ -19,7 +19,7 @@ class ApiResponse
     public static function created(mixed $data, string $message): JsonResponse
     {
         return response()->json([
-            'data'    => $data,
+            'data' => $data,
             'message' => $message,
         ], 201);
     }
@@ -27,7 +27,7 @@ class ApiResponse
     public static function noContent(string $message): JsonResponse
     {
         return response()->json([
-            'data'    => null,
+            'data' => null,
             'message' => $message,
         ], 200);
     }

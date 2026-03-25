@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Group;
 use App\Models\Settlement;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,11 +20,11 @@ class SettlementFactory extends Factory
     public function definition(): array
     {
         return [
-            'group_id'   => \App\Models\Group::factory(),
-            'from_user'  => \App\Models\User::factory(),
-            'to_user'    => \App\Models\User::factory(),
-            'amount'     => $this->faker->randomFloat(2, 50, 2000),
-            'status'     => 'pending',
+            'group_id' => Group::factory(),
+            'from_user' => User::factory(),
+            'to_user' => User::factory(),
+            'amount' => $this->faker->randomFloat(2, 50, 2000),
+            'status' => 'pending',
             'settled_at' => null,
         ];
     }

@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\ExpenseItem;
 use App\Models\ItemSplit;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,9 +20,9 @@ class ItemSplitFactory extends Factory
     public function definition(): array
     {
         return [
-            'expense_item_id' => \App\Models\ExpenseItem::factory(),
-            'user_id'         => \App\Models\User::factory(),
-            'amount'          => $this->faker->randomFloat(2, 10, 500),
+            'expense_item_id' => ExpenseItem::factory(),
+            'user_id' => User::factory(),
+            'amount' => $this->faker->randomFloat(2, 10, 500),
         ];
     }
 }

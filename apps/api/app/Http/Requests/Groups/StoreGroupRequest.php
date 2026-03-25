@@ -12,7 +12,6 @@ use OpenApi\Attributes as OA;
 class StoreGroupRequest extends FormRequest
 {
     #[OA\Property(property: 'name', type: 'string', example: 'Weekend Trip')]
-
     public function authorize(): bool
     {
         return $this->user() !== null;

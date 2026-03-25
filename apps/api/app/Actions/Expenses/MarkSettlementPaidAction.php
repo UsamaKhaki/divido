@@ -17,15 +17,15 @@ class MarkSettlementPaidAction
         $settlement = $this->repo->findById($settlementId);
 
         if (! $settlement) {
-            throw new SettlementNotFoundException();
+            throw new SettlementNotFoundException;
         }
 
         if ($settlement->from_user !== $userId) {
-            throw new NotSettlementPayerException();
+            throw new NotSettlementPayerException;
         }
 
         if ($settlement->status === 'settled') {
-            throw new AlreadySettledException();
+            throw new AlreadySettledException;
         }
 
         return $this->repo->markSettled($settlement);

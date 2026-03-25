@@ -227,3 +227,23 @@ export interface ItemSuggestion {
 export interface ExpenseSummaryShareResponse {
   summary: string
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Insights — GET /groups/:id/insights
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface SpentPerUser {
+  user: Pick<User, 'id' | 'name'>
+  total: number
+}
+
+export interface CategoryBreakdown {
+  category: string
+  total: number
+}
+
+export interface GroupInsightsResponse {
+  total_group_spend: number
+  spent_per_user: SpentPerUser[]
+  category_breakdown: CategoryBreakdown[]
+}

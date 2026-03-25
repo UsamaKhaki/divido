@@ -4,10 +4,9 @@ namespace App\Http\Controllers\Api\Groups;
 
 use App\Exceptions\GroupNotFoundException;
 use App\Exceptions\NotGroupMemberException;
-use App\Http\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\ApiResponse;
 use App\Http\Resources\Expenses\SettlementResource;
-use App\Models\Group;
 use App\Repositories\GroupRepository;
 use App\Repositories\SettlementRepository;
 use Illuminate\Http\JsonResponse;
@@ -17,7 +16,7 @@ use OpenApi\Attributes as OA;
 class GroupSettlementController extends Controller
 {
     public function __construct(
-        private GroupRepository      $groupRepo,
+        private GroupRepository $groupRepo,
         private SettlementRepository $settlementRepo,
     ) {}
 
@@ -36,11 +35,11 @@ class GroupSettlementController extends Controller
         $groupModel = $this->groupRepo->findById($group);
 
         if (! $groupModel) {
-            throw new GroupNotFoundException();
+            throw new GroupNotFoundException;
         }
 
         if (! $this->groupRepo->isMember($groupModel, $request->user()->id)) {
-            throw new NotGroupMemberException();
+            throw new NotGroupMemberException;
         }
 
         $settlements = $this->settlementRepo->findByGroup($group);
@@ -50,7 +49,7 @@ class GroupSettlementController extends Controller
             ->sum(fn ($s) => (float) $s->amount);
 
         return ApiResponse::ok([
-            'settlements'     => SettlementResource::collection($settlements),
+            'settlements' => SettlementResource::collection($settlements),
             'total_unsettled' => (float) round($totalUnsettled, 2),
         ]);
     }

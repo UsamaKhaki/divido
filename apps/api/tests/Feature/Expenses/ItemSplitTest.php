@@ -4,18 +4,19 @@ use App\Models\Expense;
 use App\Models\ExpenseItem;
 use App\Models\Group;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-uses(TestCase::class, \Illuminate\Foundation\Testing\RefreshDatabase::class);
+uses(TestCase::class, RefreshDatabase::class);
 
 describe('PUT /api/v1/expenses/{expense}/items/{item}/splits', function () {
 
     it('assigns splits to an item and returns 200', function () {
-        $user    = User::factory()->create();
-        $user2   = User::factory()->create();
-        $group   = Group::factory()->hasAttached([$user, $user2], [], 'members')->create(['created_by' => $user->id]);
+        $user = User::factory()->create();
+        $user2 = User::factory()->create();
+        $group = Group::factory()->hasAttached([$user, $user2], [], 'members')->create(['created_by' => $user->id]);
         $expense = Expense::factory()->create(['group_id' => $group->id, 'paid_by' => $user->id]);
-        $item    = ExpenseItem::factory()->create(['expense_id' => $expense->id, 'price' => 300.00, 'quantity' => 1]);
+        $item = ExpenseItem::factory()->create(['expense_id' => $expense->id, 'price' => 300.00, 'quantity' => 1]);
 
         $response = $this->actingAs($user)
             ->putJson("/api/v1/expenses/{$expense->id}/items/{$item->id}/splits", [
@@ -35,12 +36,12 @@ describe('PUT /api/v1/expenses/{expense}/items/{item}/splits', function () {
     });
 
     it('replaces existing splits on re-submission', function () {
-        $user    = User::factory()->create();
-        $user2   = User::factory()->create();
-        $user3   = User::factory()->create();
-        $group   = Group::factory()->hasAttached([$user, $user2, $user3], [], 'members')->create(['created_by' => $user->id]);
+        $user = User::factory()->create();
+        $user2 = User::factory()->create();
+        $user3 = User::factory()->create();
+        $group = Group::factory()->hasAttached([$user, $user2, $user3], [], 'members')->create(['created_by' => $user->id]);
         $expense = Expense::factory()->create(['group_id' => $group->id, 'paid_by' => $user->id]);
-        $item    = ExpenseItem::factory()->create(['expense_id' => $expense->id, 'price' => 600.00, 'quantity' => 1]);
+        $item = ExpenseItem::factory()->create(['expense_id' => $expense->id, 'price' => 600.00, 'quantity' => 1]);
 
         // First submission
         $this->actingAs($user)
@@ -67,11 +68,11 @@ describe('PUT /api/v1/expenses/{expense}/items/{item}/splits', function () {
     });
 
     it('returns 422 when split amounts do not equal item total', function () {
-        $user    = User::factory()->create();
-        $user2   = User::factory()->create();
-        $group   = Group::factory()->hasAttached([$user, $user2], [], 'members')->create(['created_by' => $user->id]);
+        $user = User::factory()->create();
+        $user2 = User::factory()->create();
+        $group = Group::factory()->hasAttached([$user, $user2], [], 'members')->create(['created_by' => $user->id]);
         $expense = Expense::factory()->create(['group_id' => $group->id, 'paid_by' => $user->id]);
-        $item    = ExpenseItem::factory()->create(['expense_id' => $expense->id, 'price' => 300.00, 'quantity' => 1]);
+        $item = ExpenseItem::factory()->create(['expense_id' => $expense->id, 'price' => 300.00, 'quantity' => 1]);
 
         $this->actingAs($user)
             ->putJson("/api/v1/expenses/{$expense->id}/items/{$item->id}/splits", [
@@ -84,10 +85,10 @@ describe('PUT /api/v1/expenses/{expense}/items/{item}/splits', function () {
     });
 
     it('returns 422 when splits array is missing', function () {
-        $user    = User::factory()->create();
-        $group   = Group::factory()->hasAttached($user, [], 'members')->create(['created_by' => $user->id]);
+        $user = User::factory()->create();
+        $group = Group::factory()->hasAttached($user, [], 'members')->create(['created_by' => $user->id]);
         $expense = Expense::factory()->create(['group_id' => $group->id, 'paid_by' => $user->id]);
-        $item    = ExpenseItem::factory()->create(['expense_id' => $expense->id, 'price' => 300.00, 'quantity' => 1]);
+        $item = ExpenseItem::factory()->create(['expense_id' => $expense->id, 'price' => 300.00, 'quantity' => 1]);
 
         $this->actingAs($user)
             ->putJson("/api/v1/expenses/{$expense->id}/items/{$item->id}/splits", [])
@@ -95,11 +96,11 @@ describe('PUT /api/v1/expenses/{expense}/items/{item}/splits', function () {
     });
 
     it('returns 403 when requester is not a group member', function () {
-        $user    = User::factory()->create();
-        $other   = User::factory()->create();
-        $group   = Group::factory()->hasAttached($user, [], 'members')->create(['created_by' => $user->id]);
+        $user = User::factory()->create();
+        $other = User::factory()->create();
+        $group = Group::factory()->hasAttached($user, [], 'members')->create(['created_by' => $user->id]);
         $expense = Expense::factory()->create(['group_id' => $group->id, 'paid_by' => $user->id]);
-        $item    = ExpenseItem::factory()->create(['expense_id' => $expense->id, 'price' => 300.00, 'quantity' => 1]);
+        $item = ExpenseItem::factory()->create(['expense_id' => $expense->id, 'price' => 300.00, 'quantity' => 1]);
 
         $this->actingAs($other)
             ->putJson("/api/v1/expenses/{$expense->id}/items/{$item->id}/splits", [
@@ -109,8 +110,8 @@ describe('PUT /api/v1/expenses/{expense}/items/{item}/splits', function () {
     });
 
     it('returns 404 when item does not exist', function () {
-        $user    = User::factory()->create();
-        $group   = Group::factory()->hasAttached($user, [], 'members')->create(['created_by' => $user->id]);
+        $user = User::factory()->create();
+        $group = Group::factory()->hasAttached($user, [], 'members')->create(['created_by' => $user->id]);
         $expense = Expense::factory()->create(['group_id' => $group->id, 'paid_by' => $user->id]);
 
         $this->actingAs($user)
@@ -125,11 +126,11 @@ describe('PUT /api/v1/expenses/{expense}/items/{item}/splits', function () {
     });
 
     it('regenerates pending settlements after split update', function () {
-        $payer   = User::factory()->create();
-        $debtor  = User::factory()->create();
-        $group   = Group::factory()->hasAttached([$payer, $debtor], [], 'members')->create(['created_by' => $payer->id]);
+        $payer = User::factory()->create();
+        $debtor = User::factory()->create();
+        $group = Group::factory()->hasAttached([$payer, $debtor], [], 'members')->create(['created_by' => $payer->id]);
         $expense = Expense::factory()->create(['group_id' => $group->id, 'paid_by' => $payer->id]);
-        $item    = ExpenseItem::factory()->create(['expense_id' => $expense->id, 'price' => 600.00, 'quantity' => 1]);
+        $item = ExpenseItem::factory()->create(['expense_id' => $expense->id, 'price' => 600.00, 'quantity' => 1]);
 
         $this->actingAs($payer)
             ->putJson("/api/v1/expenses/{$expense->id}/items/{$item->id}/splits", [
@@ -141,11 +142,11 @@ describe('PUT /api/v1/expenses/{expense}/items/{item}/splits', function () {
             ->assertOk();
 
         $this->assertDatabaseHas('settlements', [
-            'group_id'  => $group->id,
+            'group_id' => $group->id,
             'from_user' => $debtor->id,
-            'to_user'   => $payer->id,
-            'amount'    => '300.00',
-            'status'    => 'pending',
+            'to_user' => $payer->id,
+            'amount' => '300.00',
+            'status' => 'pending',
         ]);
     });
 });

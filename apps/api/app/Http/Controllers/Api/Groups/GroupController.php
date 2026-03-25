@@ -70,11 +70,11 @@ class GroupController extends Controller
         $group = $this->repo->findById($groupId);
 
         if (! $group) {
-            throw new GroupNotFoundException();
+            throw new GroupNotFoundException;
         }
 
         if (! $this->repo->isMember($group, $request->user()->id)) {
-            throw new NotGroupMemberException();
+            throw new NotGroupMemberException;
         }
 
         return ApiResponse::ok(new GroupResource($group));
@@ -95,7 +95,7 @@ class GroupController extends Controller
         $group = $this->repo->findById($groupId);
 
         if (! $group) {
-            throw new GroupNotFoundException();
+            throw new GroupNotFoundException;
         }
 
         $action->execute($group, $request->user()->id);

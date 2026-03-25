@@ -14,15 +14,14 @@ class ExpenseItemResource extends JsonResource
     #[OA\Property(property: 'name', type: 'string')]
     #[OA\Property(property: 'price', type: 'number', format: 'float')]
     #[OA\Property(property: 'quantity', type: 'integer')]
-
     public function toArray(Request $request): array
     {
         return [
-            'id'       => $this->id,
-            'name'     => $this->name,
-            'price'    => (float) $this->price,
+            'id' => $this->id,
+            'name' => $this->name,
+            'price' => (float) $this->price,
             'quantity' => $this->quantity,
-            'splits'   => ItemSplitResource::collection($this->whenLoaded('splits')),
+            'splits' => ItemSplitResource::collection($this->whenLoaded('splits')),
         ];
     }
 }

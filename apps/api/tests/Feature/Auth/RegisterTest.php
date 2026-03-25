@@ -1,17 +1,18 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-uses(TestCase::class, \Illuminate\Foundation\Testing\RefreshDatabase::class);
+uses(TestCase::class, RefreshDatabase::class);
 
 describe('POST /api/v1/auth/register', function () {
 
     it('creates an account and returns 201 with token and user', function () {
         $response = $this->postJson('/api/v1/auth/register', [
-            'name'                  => 'Usama Khaki',
-            'email'                 => 'usama@example.com',
-            'password'              => 'secret123',
+            'name' => 'Usama Khaki',
+            'email' => 'usama@example.com',
+            'password' => 'secret123',
             'password_confirmation' => 'secret123',
         ]);
 
@@ -26,9 +27,9 @@ describe('POST /api/v1/auth/register', function () {
         User::factory()->create(['email' => 'usama@example.com']);
 
         $this->postJson('/api/v1/auth/register', [
-            'name'                  => 'Usama Khaki',
-            'email'                 => 'usama@example.com',
-            'password'              => 'secret123',
+            'name' => 'Usama Khaki',
+            'email' => 'usama@example.com',
+            'password' => 'secret123',
             'password_confirmation' => 'secret123',
         ])->assertUnprocessable()
             ->assertJsonValidationErrors(['email']);
@@ -42,9 +43,9 @@ describe('POST /api/v1/auth/register', function () {
 
     it('returns 422 when passwords do not match', function () {
         $this->postJson('/api/v1/auth/register', [
-            'name'                  => 'Usama Khaki',
-            'email'                 => 'usama@example.com',
-            'password'              => 'secret123',
+            'name' => 'Usama Khaki',
+            'email' => 'usama@example.com',
+            'password' => 'secret123',
             'password_confirmation' => 'different',
         ])->assertUnprocessable()
             ->assertJsonValidationErrors(['password']);

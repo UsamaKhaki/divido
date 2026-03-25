@@ -12,7 +12,7 @@ class CreateExpenseAction
 {
     public function __construct(
         private readonly ExpenseRepository $expenseRepo,
-        private readonly GroupRepository   $groupRepo,
+        private readonly GroupRepository $groupRepo,
     ) {}
 
     public function execute(ExpenseData $data): Expense
@@ -20,15 +20,15 @@ class CreateExpenseAction
         $group = $this->groupRepo->findById($data->groupId);
 
         if (! $group || ! $this->groupRepo->isMember($group, $data->paidBy)) {
-            throw new NotGroupMemberException();
+            throw new NotGroupMemberException;
         }
 
         $expense = $this->expenseRepo->create([
-            'group_id'     => $data->groupId,
-            'paid_by'      => $data->paidBy,
-            'title'        => $data->title,
+            'group_id' => $data->groupId,
+            'paid_by' => $data->paidBy,
+            'title' => $data->title,
             'total_amount' => $data->totalAmount,
-            'category'     => $data->category,
+            'category' => $data->category,
         ]);
 
         if (! empty($data->items)) {

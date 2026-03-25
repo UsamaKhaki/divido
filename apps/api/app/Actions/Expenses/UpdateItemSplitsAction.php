@@ -12,7 +12,7 @@ use App\Repositories\SettlementRepository;
 class UpdateItemSplitsAction
 {
     public function __construct(
-        private ItemSplitRepository  $splitRepo,
+        private ItemSplitRepository $splitRepo,
         private SettlementRepository $settlementRepo,
         private RegenerateGroupSettlementsAction $regenerate,
     ) {}
@@ -22,7 +22,7 @@ class UpdateItemSplitsAction
         $item = ExpenseItem::with('expense')->find($data->expenseItemId);
 
         if (! $item) {
-            throw new ExpenseItemNotFoundException();
+            throw new ExpenseItemNotFoundException;
         }
 
         $itemTotal = round((float) $item->price * $item->quantity, 2);
@@ -30,7 +30,7 @@ class UpdateItemSplitsAction
 
         if (abs($itemTotal - $splitTotal) > 0.01) {
             throw new InvalidSplitAmountException(
-                "Split amounts ({$splitTotal}) must equal item total ({$itemTotal})."
+                "Split amounts ({$splitTotal}) must equal item total ({$itemTotal}).",
             );
         }
 

@@ -23,7 +23,7 @@ class ExpenseController extends Controller
 {
     public function __construct(
         private readonly ExpenseRepository $expenseRepo,
-        private readonly GroupRepository   $groupRepo,
+        private readonly GroupRepository $groupRepo,
     ) {}
 
     #[OA\Get(
@@ -43,23 +43,23 @@ class ExpenseController extends Controller
         $group = $this->groupRepo->findById($groupId);
 
         if (! $group) {
-            throw new GroupNotFoundException();
+            throw new GroupNotFoundException;
         }
 
         if (! $this->groupRepo->isMember($group, $request->user()->id)) {
-            throw new NotGroupMemberException();
+            throw new NotGroupMemberException;
         }
 
-        $perPage   = min((int) $request->query('per_page', 15), 100);
+        $perPage = min((int) $request->query('per_page', 15), 100);
         $paginator = $this->expenseRepo->findByGroupPaginated($groupId, $perPage);
 
         return response()->json([
             'data' => ExpenseListResource::collection($paginator->items()),
             'meta' => [
                 'current_page' => $paginator->currentPage(),
-                'last_page'    => $paginator->lastPage(),
-                'per_page'     => $paginator->perPage(),
-                'total'        => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
+                'per_page' => $paginator->perPage(),
+                'total' => $paginator->total(),
             ],
         ]);
     }
@@ -99,13 +99,13 @@ class ExpenseController extends Controller
         $expense = $this->expenseRepo->findById($expenseId);
 
         if (! $expense) {
-            throw new ExpenseNotFoundException();
+            throw new ExpenseNotFoundException;
         }
 
         $group = $this->groupRepo->findById($expense->group_id);
 
         if (! $group || ! $this->groupRepo->isMember($group, $request->user()->id)) {
-            throw new NotGroupMemberException();
+            throw new NotGroupMemberException;
         }
 
         return ApiResponse::ok(new ExpenseResource($expense));
@@ -126,7 +126,7 @@ class ExpenseController extends Controller
         $expense = $this->expenseRepo->findById($expenseId);
 
         if (! $expense) {
-            throw new ExpenseNotFoundException();
+            throw new ExpenseNotFoundException;
         }
 
         $action->execute($expense, $request->user()->id);

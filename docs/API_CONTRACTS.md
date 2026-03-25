@@ -581,6 +581,34 @@ Generate a text summary for sharing (WhatsApp, etc.).
 
 ---
 
+## Phase 5 — Insights
+
+---
+
+#### `GET /groups/{groupId}/insights` 🔒
+Return spending analytics for a group.
+
+**Response `200`:**
+```json
+{
+  "data": {
+    "total_group_spend": 2400.00,
+    "spent_per_user": [
+      { "user": { "id": 1, "name": "Usama Khaki" }, "total": 1200.00 },
+      { "user": { "id": 2, "name": "Waqas Ali"   }, "total": 1200.00 }
+    ],
+    "category_breakdown": [
+      { "category": "food",      "total": 1800.00 },
+      { "category": "transport", "total": 600.00  }
+    ]
+  }
+}
+```
+
+**Errors:** `403` — not a member, `404` — group not found
+
+---
+
 ## HTTP Status Code Reference
 
 | Code | Meaning |

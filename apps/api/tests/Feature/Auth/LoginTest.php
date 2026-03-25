@@ -1,9 +1,10 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-uses(TestCase::class, \Illuminate\Foundation\Testing\RefreshDatabase::class);
+uses(TestCase::class, RefreshDatabase::class);
 
 describe('POST /api/v1/auth/login', function () {
 
@@ -11,7 +12,7 @@ describe('POST /api/v1/auth/login', function () {
         $user = User::factory()->create(['password' => bcrypt('secret123')]);
 
         $this->postJson('/api/v1/auth/login', [
-            'email'    => $user->email,
+            'email' => $user->email,
             'password' => 'secret123',
         ])->assertOk()
             ->assertJsonStructure(['data' => ['token', 'user' => ['id', 'name', 'email']]])
@@ -22,7 +23,7 @@ describe('POST /api/v1/auth/login', function () {
         User::factory()->create(['email' => 'usama@example.com', 'password' => bcrypt('correct')]);
 
         $this->postJson('/api/v1/auth/login', [
-            'email'    => 'usama@example.com',
+            'email' => 'usama@example.com',
             'password' => 'wrong',
         ])->assertUnauthorized();
     });

@@ -4,12 +4,10 @@ namespace App\Http\Controllers\Api\Expenses;
 
 use App\Actions\Expenses\UpdateItemSplitsAction;
 use App\DTOs\Expenses\SplitData;
-use App\Exceptions\ExpenseItemNotFoundException;
-use App\Http\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\ApiResponse;
 use App\Http\Requests\Expenses\UpdateItemSplitsRequest;
 use App\Http\Resources\Expenses\ItemSplitResource;
-use App\Models\ExpenseItem;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
 
@@ -21,7 +19,7 @@ class ExpenseItemSplitController extends Controller
         security: [['sanctum' => []]],
         requestBody: new OA\RequestBody(
             required: true,
-            content: new OA\JsonContent(ref: '#/components/schemas/UpdateItemSplitsRequest')
+            content: new OA\JsonContent(ref: '#/components/schemas/UpdateItemSplitsRequest'),
         ),
         tags: ['Splits'],
     )]
@@ -37,12 +35,12 @@ class ExpenseItemSplitController extends Controller
         int $item,
         UpdateItemSplitsAction $action,
     ): JsonResponse {
-        $data   = SplitData::fromRequest($request, $item);
+        $data = SplitData::fromRequest($request, $item);
         $result = $action->execute($data);
 
         return ApiResponse::ok([
             'item_id' => $result->id,
-            'splits'  => ItemSplitResource::collection($result->splits),
+            'splits' => ItemSplitResource::collection($result->splits),
         ], 'Splits updated successfully.');
     }
 }

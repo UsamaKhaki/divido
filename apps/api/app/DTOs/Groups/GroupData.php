@@ -8,13 +8,13 @@ class GroupData
 {
     public function __construct(
         public readonly string $name,
-        public readonly int    $createdBy,
+        public readonly int $createdBy,
     ) {}
 
     public static function fromRequest(StoreGroupRequest $request): self
     {
         return new self(
-            name:      $request->string('name')->toString(),
+            name: $request->string('name')->toString(),
             createdBy: $request->user()->id,
         );
     }

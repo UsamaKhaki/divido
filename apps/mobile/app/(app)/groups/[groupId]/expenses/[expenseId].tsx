@@ -1,12 +1,15 @@
 import { router, useLocalSearchParams, useNavigation } from 'expo-router'
 import { useEffect, useReducer } from 'react'
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native'
+import { ActivityIndicator, Alert, Pressable, ScrollView, Share, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { ErrorState } from '@/components/ErrorState'
 import { LoadingSkeleton } from '@/components/LoadingSkeleton'
+import { useAuthStore } from '@/features/auth/store/authStore'
 import { SplitItemRow } from '@/features/expenses/components/SplitItemRow'
+import { useDeleteExpenseMutation } from '@/features/expenses/hooks/useDeleteExpenseMutation'
 import { useExpenseQuery } from '@/features/expenses/hooks/useExpenseQuery'
+import { useExpenseSummaryQuery } from '@/features/expenses/hooks/useExpenseSummaryQuery'
 import { useUpdateSplitsMutation } from '@/features/expenses/hooks/useUpdateSplitsMutation'
 import { useGroupQuery } from '@/features/groups/hooks/useGroupQuery'
 import type { ExpenseCategory } from '@/types/api.types'
@@ -73,9 +76,15 @@ export default function ExpenseDetailScreen() {
     refetch: refetchGroup,
   } = useGroupQuery(groupId)
 
+  const currentUserId = useAuthStore((s) => s.user?.id)
+
   const { mutate: updateSplits, isPending: isSaving } = useUpdateSplitsMutation()
+  const { mutate: deleteExpense, isPending: isDeleting } = useDeleteExpenseMutation()
+  const { data: summary } = useExpenseSummaryQuery(expenseId)
 
   const [splitState, dispatch] = useReducer(splitReducer, {})
+
+  const isCreator = expense?.paid_by.id === currentUserId
 
   // Initialise split state from existing data once expense loads
   useEffect(() => {
@@ -122,6 +131,26 @@ export default function ExpenseDetailScreen() {
         splits: userIds.map((userId) => ({ user_id: userId, amount: perUser })),
       },
     })
+  }
+
+  const handleShare = async () => {
+    if (!summary) return
+    await Share.share({ message: summary.summary })
+  }
+
+  const handleDelete = () => {
+    Alert.alert(
+      'Delete expense',
+      'This will permanently delete this expense and all its splits. This cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => deleteExpense({ expenseId, groupId }, { onSuccess: () => router.back() }),
+        },
+      ],
+    )
   }
 
   const categoryLabel = expense?.category ? CATEGORY_LABELS[expense.category] : null
@@ -226,19 +255,46 @@ export default function ExpenseDetailScreen() {
         ) : null}
       </ScrollView>
 
-      {/* Footer — view settlements */}
+      {/* Footer */}
       <View
         className="absolute bottom-0 left-0 right-0 border-t border-gray-100 bg-white px-4 py-3"
         style={{ paddingBottom: insets.bottom + 8 }}
       >
-        <Pressable
-          className="min-h-[44px] items-center justify-center rounded-xl bg-blue-600"
-          onPress={() => router.push(`/(app)/groups/${groupId}/settlements`)}
-          accessibilityRole="button"
-          accessibilityLabel="View group settlements"
-        >
-          <Text className="text-sm font-semibold text-white">View Settlements</Text>
-        </Pressable>
+        <View className="flex-row gap-2">
+          <Pressable
+            className="flex-1 min-h-[44px] items-center justify-center rounded-xl bg-blue-600"
+            onPress={() => router.push(`/(app)/groups/${groupId}/settlements`)}
+            accessibilityRole="button"
+            accessibilityLabel="View group settlements"
+          >
+            <Text className="text-sm font-semibold text-white">Settlements</Text>
+          </Pressable>
+          {summary ? (
+            <Pressable
+              className="flex-1 min-h-[44px] items-center justify-center rounded-xl bg-gray-900"
+              onPress={() => void handleShare()}
+              accessibilityRole="button"
+              accessibilityLabel="Share expense summary"
+            >
+              <Text className="text-sm font-semibold text-white">Share</Text>
+            </Pressable>
+          ) : null}
+        </View>
+        {isCreator ? (
+          <Pressable
+            className="mt-2 min-h-[44px] items-center justify-center rounded-xl border border-red-200 bg-red-50"
+            onPress={handleDelete}
+            disabled={isDeleting}
+            accessibilityRole="button"
+            accessibilityLabel="Delete expense"
+          >
+            {isDeleting ? (
+              <ActivityIndicator color="#ef4444" />
+            ) : (
+              <Text className="text-sm font-semibold text-red-500">Delete expense</Text>
+            )}
+          </Pressable>
+        ) : null}
       </View>
     </View>
   )

@@ -11,7 +11,9 @@ import { ExpenseCard } from '@/features/expenses/components/ExpenseCard'
 import { useExpensesQuery } from '@/features/expenses/hooks/useExpensesQuery'
 import { GroupMemberRow } from '@/features/groups/components/GroupMemberRow'
 import { useAddMemberMutation } from '@/features/groups/hooks/useAddMemberMutation'
+import { useDeleteGroupMutation } from '@/features/groups/hooks/useDeleteGroupMutation'
 import { useGroupQuery } from '@/features/groups/hooks/useGroupQuery'
+import { useRemoveMemberMutation } from '@/features/groups/hooks/useRemoveMemberMutation'
 
 export default function GroupDetailScreen() {
   const { groupId: groupIdParam } = useLocalSearchParams<{ groupId: string }>()
@@ -39,6 +41,8 @@ export default function GroupDetailScreen() {
   } = useExpensesQuery(groupId)
 
   const { mutate: addMember, isPending: isAddingMember } = useAddMemberMutation()
+  const { mutate: removeMember } = useRemoveMemberMutation()
+  const { mutate: deleteGroup, isPending: isDeletingGroup } = useDeleteGroupMutation()
 
   useEffect(() => {
     if (group) {
@@ -87,6 +91,7 @@ export default function GroupDetailScreen() {
               key={member.id}
               member={member}
               canRemove={isCreator && member.id !== currentUserId}
+              onRemove={(userId) => removeMember({ groupId, userId })}
             />
           ))}
         </View>
@@ -181,6 +186,33 @@ export default function GroupDetailScreen() {
           >
             <Text className="text-sm font-semibold text-white">View Settlements</Text>
           </Pressable>
+          <Pressable
+            className="mt-2 min-h-[44px] items-center justify-center rounded-xl bg-indigo-600"
+            onPress={() => router.push(`/(app)/groups/${groupId}/insights`)}
+            accessibilityRole="button"
+            accessibilityLabel="View insights"
+          >
+            <Text className="text-sm font-semibold text-white">Insights</Text>
+          </Pressable>
+          {isCreator ? (
+            <Pressable
+              className="mt-2 min-h-[44px] items-center justify-center rounded-xl border border-red-200 bg-red-50"
+              onPress={() =>
+                deleteGroup(groupId, {
+                  onSuccess: () => router.replace('/(app)'),
+                })
+              }
+              disabled={isDeletingGroup}
+              accessibilityRole="button"
+              accessibilityLabel="Delete group"
+            >
+              {isDeletingGroup ? (
+                <ActivityIndicator color="#ef4444" />
+              ) : (
+                <Text className="text-sm font-semibold text-red-500">Delete group</Text>
+              )}
+            </Pressable>
+          ) : null}
         </View>
       )}
     </View>
