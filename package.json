@@ -1,0 +1,24 @@
+{
+  "name": "divido",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/mobile"
+  ],
+  "scripts": {
+    "mobile": "npm run start --workspace=apps/mobile",
+    "mobile:ios": "npm run ios --workspace=apps/mobile",
+    "mobile:android": "npm run android --workspace=apps/mobile",
+    "mobile:test": "npm run test --workspace=apps/mobile",
+    "mobile:lint": "npm run lint --workspace=apps/mobile",
+    "mobile:lint:fix": "npm run lint:fix --workspace=apps/mobile",
+    "mobile:format": "npm run format --workspace=apps/mobile",
+    "mobile:format:check": "npm run format:check --workspace=apps/mobile",
+    "api:dev": "cd apps/api && php artisan serve",
+    "api:test": "cd apps/api && ./vendor/bin/pest",
+    "api:lint": "cd apps/api && ./vendor/bin/pint --test",
+    "api:lint:fix": "cd apps/api && ./vendor/bin/pint",
+    "lint": "npm run mobile:lint && npm run api:lint",
+    "test": "npm run mobile:test && npm run api:test"
+  }
+}

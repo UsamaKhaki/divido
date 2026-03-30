@@ -139,7 +139,10 @@
 - [x] `.env.example` — backend (`apps/api/.env.example`)
 - [x] `.env.example` — mobile (`apps/mobile/.env.example` with `EXPO_PUBLIC_API_URL`)
 - [x] CI — GitHub Actions: run Pest tests + lint on every push — `api-ci.yml` + `mobile-ci.yml`
-- [x] Frontend test suite — Jest + jest-expo + MSW v2 + RNTL: 78 tests, 21 suites — API services, hooks, stores, components, screens all covered (`apps/mobile/app/**/__tests__/`)
+- [x] Frontend test suite — Jest + jest-expo + MSW v2 + RNTL: 78 tests, 21 suites — API services, hooks, stores, components, screens all covered (`apps/mobile/src/**/__tests__/`, `apps/mobile/app/**/__tests__/`)
+- [x] Non-route code moved from `app/` to `src/` — eliminates Expo Router "missing default export" warnings
+- [x] pnpm `node-linker=hoisted` — required for NativeWind/Metro module resolution
+- [x] `react-native-reanimated/plugin` added to babel.config.js
 
 ---
 

@@ -1,12 +1,16 @@
+const path = require('path')
+
+// Monorepo root — packages are hoisted here by pnpm (node-linker=hoisted)
+const monorepoRoot = path.resolve(__dirname, '../..')
+
 module.exports = {
   preset: 'jest-expo',
   testMatch: ['**/__tests__/**/*.test.ts?(x)', '**/*.test.ts?(x)'],
   setupFiles: ['./jest.setup.ts'],
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/app/$1',
-    '^@/app/(.*)$': '<rootDir>/app/$1',
+    '^@/(.*)$': '<rootDir>/src/$1',
     // Route msw/node to its ESM bundle so Babel can transpile it (react-native env resolves to null)
-    '^msw/node$': '<rootDir>/node_modules/msw/lib/node/index.mjs',
+    '^msw/node$': path.join(monorepoRoot, 'node_modules/msw/lib/node/index.mjs'),
   },
   // Extend transform to handle .mjs files (e.g. msw/node ESM bundle)
   transform: {

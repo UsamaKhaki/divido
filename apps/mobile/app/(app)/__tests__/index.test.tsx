@@ -1,13 +1,13 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react-native'
+import { screen, waitFor } from '@testing-library/react-native'
 
-import { factory } from '../../__test-utils__/factory'
-import { renderWithQuery } from '../../__test-utils__/createWrapper'
-import { http, HttpResponse, server } from '../../__test-utils__/server'
-import { apiUrl } from '../../__test-utils__/server'
+import HomeScreen from '../index'
+
+import { renderWithQuery } from '@/__test-utils__/createWrapper'
+import { factory } from '@/__test-utils__/factory'
+import { http, HttpResponse, server, apiUrl } from '@/__test-utils__/server'
 import { localDb } from '@/features/sync/services/localDb'
 
 // Bypass the expo-router layout — import the default export directly
-import HomeScreen from '@/(app)/index'
 
 const mockedLocalDb = jest.mocked(localDb)
 
@@ -23,7 +23,10 @@ describe('HomeScreen', () => {
     server.use(
       http.get(apiUrl('/groups'), async () => {
         await new Promise((r) => setTimeout(r, 500))
-        return HttpResponse.json({ data: [], meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 } })
+        return HttpResponse.json({
+          data: [],
+          meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 },
+        })
       }),
     )
 
@@ -44,15 +47,16 @@ describe('HomeScreen', () => {
     renderWithQuery(<HomeScreen />)
 
     // Falls back to localDb (returns []) → empty state, not error state
-    await waitFor(() =>
-      expect(screen.getByText('No groups yet.')).toBeTruthy(),
-    )
+    await waitFor(() => expect(screen.getByText('No groups yet.')).toBeTruthy())
   })
 
   it('shows empty state when no groups exist', async () => {
     server.use(
       http.get(apiUrl('/groups'), () =>
-        HttpResponse.json({ data: [], meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 } }),
+        HttpResponse.json({
+          data: [],
+          meta: { current_page: 1, last_page: 1, per_page: 15, total: 0 },
+        }),
       ),
     )
 
@@ -68,7 +72,10 @@ describe('HomeScreen', () => {
     ]
     server.use(
       http.get(apiUrl('/groups'), () =>
-        HttpResponse.json({ data: groups, meta: { current_page: 1, last_page: 1, per_page: 15, total: 2 } }),
+        HttpResponse.json({
+          data: groups,
+          meta: { current_page: 1, last_page: 1, per_page: 15, total: 2 },
+        }),
       ),
     )
 

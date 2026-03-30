@@ -1,14 +1,13 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react-native'
+import { screen, fireEvent, waitFor } from '@testing-library/react-native'
 
-import { factory } from '../../__test-utils__/factory'
-import { renderWithQuery } from '../../__test-utils__/createWrapper'
-import { http, HttpResponse, server } from '../../__test-utils__/server'
-import { apiUrl } from '../../__test-utils__/server'
+import LoginScreen from '../login'
 
+import { renderWithQuery } from '@/__test-utils__/createWrapper'
+import { factory } from '@/__test-utils__/factory'
+import { http, HttpResponse, server, apiUrl } from '@/__test-utils__/server'
 import { useAuthStore } from '@/features/auth/store/authStore'
 
 // Import the default export directly
-import LoginScreen from '@/(auth)/login'
 
 beforeEach(() => {
   useAuthStore.setState({ token: null, user: null })

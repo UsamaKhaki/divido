@@ -91,6 +91,36 @@ export default [
       'prettier/prettier': 'error',
     },
   },
+  // Jest test files — define all Jest globals so no-undef doesn't fire
+  {
+    files: [
+      '**/__tests__/**/*.{ts,tsx}',
+      '**/*.test.{ts,tsx}',
+      '**/*.spec.{ts,tsx}',
+      '**/__test-utils__/**/*.{ts,tsx}',
+      'jest.setup.ts',
+    ],
+    languageOptions: {
+      globals: {
+        beforeAll: 'readonly',
+        beforeEach: 'readonly',
+        afterAll: 'readonly',
+        afterEach: 'readonly',
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        jest: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        setImmediate: 'readonly',
+        clearImmediate: 'readonly',
+        Promise: 'readonly',
+      },
+    },
+  },
   {
     ignores: [
       'node_modules/',

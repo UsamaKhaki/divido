@@ -1,3 +1,5 @@
+import type React from 'react'
+
 // Set API base URL to match .env (includes /api/v1 prefix)
 process.env.EXPO_PUBLIC_API_URL = 'http://localhost:8000/api/v1'
 
