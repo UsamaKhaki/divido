@@ -13,7 +13,7 @@
     "mobile:typecheck": "pnpm --filter mobile typecheck",
     "mobile:test": "pnpm --filter mobile test",
     "mobile:build": "pnpm --filter mobile build",
-    "api:dev": "cd apps/api && php artisan serve",
+    "api:dev": "cd apps/api && php artisan serve --port=6501",
     "api:test": "cd apps/api && ./vendor/bin/pest",
     "api:lint": "cd apps/api && ./vendor/bin/pint --test",
     "api:lint:fix": "cd apps/api && ./vendor/bin/pint",

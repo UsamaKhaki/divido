@@ -11,15 +11,15 @@ class DatabaseSeeder extends Seeder
     use WithoutModelEvents;
 
     /**
-     * Seed the application's database.
+     * Two local demo accounts, so splits and settlements can be tried between
+     * real users. Both use the factory password: "password".
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        foreach (['Alice' => 'alice@divido.test', 'Bob' => 'bob@divido.test'] as $name => $email) {
+            if (! User::where('email', $email)->exists()) {
+                User::factory()->create(['name' => $name, 'email' => $email]);
+            }
+        }
     }
 }
