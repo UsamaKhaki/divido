@@ -1,4 +1,6 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as SecureStore from 'expo-secure-store'
+import { Platform } from 'react-native'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
@@ -6,6 +8,12 @@ import { immer } from 'zustand/middleware/immer'
 import type { User } from '@/types/api.types'
 
 const SECURE_STORE_KEY = 'divido_auth'
+
+const secureStorage = {
+  getItem: (key: string) => SecureStore.getItemAsync(key),
+  setItem: (key: string, value: string) => SecureStore.setItemAsync(key, value),
+  removeItem: (key: string) => SecureStore.deleteItemAsync(key),
+}
 
 interface AuthState {
   token: string | null
@@ -32,11 +40,9 @@ export const useAuthStore = create<AuthState>()(
     })),
     {
       name: SECURE_STORE_KEY,
-      storage: createJSONStorage(() => ({
-        getItem: (key) => SecureStore.getItemAsync(key),
-        setItem: (key, value) => SecureStore.setItemAsync(key, value),
-        removeItem: (key) => SecureStore.deleteItemAsync(key),
-      })),
+      // expo-secure-store has no web implementation. The web build is for
+      // local development, so it falls back to AsyncStorage (localStorage).
+      storage: createJSONStorage(() => (Platform.OS === 'web' ? AsyncStorage : secureStorage)),
     },
   ),
 )

@@ -65,7 +65,8 @@ cp .env.example .env
 php artisan key:generate
 touch database/database.sqlite
 php artisan migrate
-php artisan serve              # http://localhost:8000
+php artisan db:seed            # demo users alice@divido.test and bob@divido.test, password "password"
+php artisan serve --port=6501  # http://localhost:6501
 
 # Mobile (new terminal)
 cd apps/mobile
@@ -75,11 +76,13 @@ pnpm ios                       # or: pnpm android, pnpm start
 
 The app uses native modules (camera, SQLite, notifications), so it needs a development build (`expo run:ios` / `expo run:android`) rather than Expo Go.
 
+For quick testing in a browser, `pnpm --filter mobile web --port 6503` runs the same app on react-native-web against the local API. Groups, expenses, splits, settlements and insights work there. Receipt scanning, notifications and WhatsApp sharing need a device, the web build keeps the auth token in localStorage instead of the Keychain, and native confirmation dialogs (`Alert`) do nothing on web, so deleting an expense can only be tried on a device.
+
 ### Environment variables
 
 | App | Variable | Purpose |
 | --- | --- | --- |
-| mobile | `EXPO_PUBLIC_API_URL` | API base URL including the `/api/v1` prefix, e.g. `http://localhost:8000/api/v1` |
+| mobile | `EXPO_PUBLIC_API_URL` | API base URL including the `/api/v1` prefix, e.g. `http://localhost:6501/api/v1` |
 | api | `APP_KEY`, `APP_URL`, `DB_*` | Standard Laravel settings; SQLite works out of the box |
 | api | `GOOGLE_VISION_API_KEY` | Google Cloud Vision key for receipt OCR |
 
