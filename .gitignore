@@ -8,3 +8,17 @@ node_modules/
 .DS_Store
 *.log
 coverage/
+
+# Local AI assistant and editor-agent files
+.claude/
+CLAUDE.md
+CLAUDE.local.md
+AGENTS.md
+.cursor/
+.cursorrules
+.windsurfrules
+.aider*
+.github/copilot-instructions.md
+.github/agents/
+.github/skills/
+docs/PLAN.md
