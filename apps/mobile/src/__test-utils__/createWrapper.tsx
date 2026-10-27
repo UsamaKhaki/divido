@@ -10,7 +10,9 @@ export const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: { retry: false, gcTime: 0 },
-      mutations: { retry: false },
+      // Mutations default to a 5 minute gcTime, whose timer outlives the test
+      // and keeps the Jest worker from exiting.
+      mutations: { retry: false, gcTime: 0 },
     },
   })
 

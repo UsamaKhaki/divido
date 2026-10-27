@@ -161,4 +161,3 @@
 ## Known gaps
 
 - Apple Vision on-device OCR is not implemented (see Phase 3).
-- Jest reports a worker that does not exit cleanly (open handle from the sync queue tests). Tests pass; teardown needs a look.

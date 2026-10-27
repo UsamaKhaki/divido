@@ -6,7 +6,7 @@
  */
 import NetInfo from '@react-native-community/netinfo'
 import type { NetInfoState } from '@react-native-community/netinfo'
-import { renderHook } from '@testing-library/react-native'
+import { act, renderHook } from '@testing-library/react-native'
 
 import { createWrapper } from '../../../../__test-utils__/createWrapper'
 import { factory } from '../../../../__test-utils__/factory'
@@ -39,6 +39,16 @@ const fireNetInfo = (state: Partial<NetInfoState>) => {
   capturedListener?.(state as NetInfoState)
 }
 
+// Goes offline then online, and waits inside act() so the store updates made
+// by the async drain are flushed before the test asserts.
+const reconnect = async () => {
+  await act(async () => {
+    fireNetInfo(offlineState)
+    fireNetInfo(onlineState)
+    await new Promise((r) => setTimeout(r, 100))
+  })
+}
+
 describe('useSyncQueue', () => {
   it('drains a create_expense op on reconnect', async () => {
     const expense = factory.expense()
@@ -56,12 +66,7 @@ describe('useSyncQueue', () => {
 
     renderHook(() => useSyncQueue(), { wrapper: Wrapper })
 
-    // Simulate: went offline, then came back online
-    fireNetInfo(offlineState)
-    fireNetInfo(onlineState)
-
-    // Give async drain a moment
-    await new Promise((r) => setTimeout(r, 100))
+    await reconnect()
 
     expect(useSyncQueueStore.getState().queue).toHaveLength(0)
     expect(invalidateSpy).toHaveBeenCalledWith(
@@ -86,9 +91,7 @@ describe('useSyncQueue', () => {
 
     renderHook(() => useSyncQueue(), { wrapper: Wrapper })
 
-    fireNetInfo(offlineState)
-    fireNetInfo(onlineState)
-    await new Promise((r) => setTimeout(r, 100))
+    await reconnect()
 
     // 4xx → op dropped + full invalidation
     expect(useSyncQueueStore.getState().queue).toHaveLength(0)
@@ -110,9 +113,7 @@ describe('useSyncQueue', () => {
     const { Wrapper } = createWrapper()
     renderHook(() => useSyncQueue(), { wrapper: Wrapper })
 
-    fireNetInfo(offlineState)
-    fireNetInfo(onlineState)
-    await new Promise((r) => setTimeout(r, 100))
+    await reconnect()
 
     // 5xx → op kept in queue to retry later
     expect(useSyncQueueStore.getState().queue).toHaveLength(1)
@@ -124,9 +125,7 @@ describe('useSyncQueue', () => {
 
     renderHook(() => useSyncQueue(), { wrapper: Wrapper })
 
-    fireNetInfo(offlineState)
-    fireNetInfo(onlineState)
-    await new Promise((r) => setTimeout(r, 50))
+    await reconnect()
 
     expect(invalidateSpy).not.toHaveBeenCalled()
   })
