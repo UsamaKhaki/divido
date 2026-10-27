@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  mobile:
+    name: Mobile (lint, typecheck, test, build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Version comes from "packageManager" in the root package.json.
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: ESLint
+        run: pnpm mobile:lint
+
+      - name: Prettier
+        run: pnpm mobile:format:check
+
+      - name: TypeScript
+        run: pnpm mobile:typecheck
+
+      - name: Jest
+        run: pnpm mobile:test --ci
+
+      - name: Bundle iOS and Android (expo export)
+        run: pnpm mobile:build
+        env:
+          EXPO_PUBLIC_API_URL: http://localhost:8000/api/v1
+
+  api:
+    name: API (Pint, Pest)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/api
+    steps:
+      - uses: actions/checkout@v4
+
+      # composer.lock resolves to packages that require PHP 8.4.
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, pdo_sqlite, sqlite3
+          coverage: none
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache/files
+          key: composer-${{ hashFiles('apps/api/composer.lock') }}
+          restore-keys: composer-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Pint
+        run: ./vendor/bin/pint --test
+
+      # phpunit.xml points tests at an in-memory SQLite database.
+      - name: Pest
+        run: ./vendor/bin/pest --colors=always

@@ -2,23 +2,25 @@
   "name": "divido",
   "version": "1.0.0",
   "private": true,
-  "workspaces": [
-    "apps/mobile"
-  ],
   "scripts": {
-    "mobile": "npm run start --workspace=apps/mobile",
-    "mobile:ios": "npm run ios --workspace=apps/mobile",
-    "mobile:android": "npm run android --workspace=apps/mobile",
-    "mobile:test": "npm run test --workspace=apps/mobile",
-    "mobile:lint": "npm run lint --workspace=apps/mobile",
-    "mobile:lint:fix": "npm run lint:fix --workspace=apps/mobile",
-    "mobile:format": "npm run format --workspace=apps/mobile",
-    "mobile:format:check": "npm run format:check --workspace=apps/mobile",
+    "mobile": "pnpm --filter mobile start",
+    "mobile:ios": "pnpm --filter mobile ios",
+    "mobile:android": "pnpm --filter mobile android",
+    "mobile:lint": "pnpm --filter mobile lint",
+    "mobile:lint:fix": "pnpm --filter mobile lint:fix",
+    "mobile:format:check": "pnpm --filter mobile format:check",
+    "mobile:format": "pnpm --filter mobile format",
+    "mobile:typecheck": "pnpm --filter mobile typecheck",
+    "mobile:test": "pnpm --filter mobile test",
+    "mobile:build": "pnpm --filter mobile build",
     "api:dev": "cd apps/api && php artisan serve",
     "api:test": "cd apps/api && ./vendor/bin/pest",
     "api:lint": "cd apps/api && ./vendor/bin/pint --test",
     "api:lint:fix": "cd apps/api && ./vendor/bin/pint",
-    "lint": "npm run mobile:lint && npm run api:lint",
-    "test": "npm run mobile:test && npm run api:test"
-  }
+    "lint": "pnpm mobile:lint && pnpm mobile:format:check && pnpm api:lint",
+    "typecheck": "pnpm mobile:typecheck",
+    "test": "pnpm mobile:test && pnpm api:test",
+    "build": "pnpm mobile:build"
+  },
+  "packageManager": "pnpm@10.23.0"
 }
