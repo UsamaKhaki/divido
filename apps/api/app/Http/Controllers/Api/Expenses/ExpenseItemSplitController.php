@@ -35,7 +35,7 @@ class ExpenseItemSplitController extends Controller
         int $item,
         UpdateItemSplitsAction $action,
     ): JsonResponse {
-        $data = SplitData::fromRequest($request, $item);
+        $data = SplitData::fromRequest($request, $expense, $item);
         $result = $action->execute($data);
 
         return ApiResponse::ok([

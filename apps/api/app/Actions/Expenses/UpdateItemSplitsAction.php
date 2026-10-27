@@ -7,21 +7,23 @@ use App\Exceptions\ExpenseItemNotFoundException;
 use App\Exceptions\InvalidSplitAmountException;
 use App\Models\ExpenseItem;
 use App\Repositories\ItemSplitRepository;
-use App\Repositories\SettlementRepository;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class UpdateItemSplitsAction
 {
     public function __construct(
         private ItemSplitRepository $splitRepo,
-        private SettlementRepository $settlementRepo,
         private RegenerateGroupSettlementsAction $regenerate,
     ) {}
 
     public function execute(SplitData $data): ExpenseItem
     {
-        $item = ExpenseItem::with('expense')->find($data->expenseItemId);
+        $item = ExpenseItem::with('expense.group')->find($data->expenseItemId);
 
-        if (! $item) {
+        // The request only authorises the expense in the URL, so an item from
+        // another expense (possibly another group) must be treated as missing.
+        if (! $item || (int) $item->expense_id !== $data->expenseId) {
             throw new ExpenseItemNotFoundException;
         }
 
@@ -34,10 +36,20 @@ class UpdateItemSplitsAction
             );
         }
 
-        $this->splitRepo->replaceSplitsForItem($item, $data->splits);
+        $memberIds = $item->expense->group->members()->pluck('users.id')->map(fn ($id) => (int) $id);
 
-        $groupId = $item->expense->group_id;
-        $this->regenerate->execute($groupId);
+        foreach ($data->splits as $split) {
+            if (! $memberIds->contains((int) $split['user_id'])) {
+                throw ValidationException::withMessages([
+                    'splits' => 'Every split must be assigned to a member of the group.',
+                ]);
+            }
+        }
+
+        DB::transaction(function () use ($item, $data) {
+            $this->splitRepo->replaceSplitsForItem($item, $data->splits);
+            $this->regenerate->execute($item->expense->group_id);
+        });
 
         return $item->load('splits.user');
     }

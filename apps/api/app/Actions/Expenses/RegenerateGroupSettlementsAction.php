@@ -30,6 +30,14 @@ class RegenerateGroupSettlementsAction
             }
         }
 
+        // Payments already made reduce what each debtor still owes. Without
+        // this, every regeneration would ask for settled debts again.
+        foreach ($this->settlementRepo->findSettledForGroup($groupId) as $settlement) {
+            $amount = (float) $settlement->amount;
+            $balances[$settlement->from_user] = ($balances[$settlement->from_user] ?? 0.0) + $amount;
+            $balances[$settlement->to_user] = ($balances[$settlement->to_user] ?? 0.0) - $amount;
+        }
+
         // Separate into creditors (owed money) and debtors (owe money)
         $creditors = [];
         $debtors = [];

@@ -22,6 +22,13 @@ class SettlementRepository
         return Settlement::with(['fromUser', 'toUser'])->find($id);
     }
 
+    public function findSettledForGroup(int $groupId): Collection
+    {
+        return Settlement::where('group_id', $groupId)
+            ->where('status', 'settled')
+            ->get();
+    }
+
     /**
      * Replace all pending settlements for a group with a fresh computed set.
      *
