@@ -44,7 +44,7 @@
 ### Backend
 - [x] Expenses CRUD — list (by group), create, show, delete (`GET|POST /api/v1/groups/{id}/expenses`, `GET|DELETE /api/v1/expenses/{id}`)
 - [x] Item splits — update (`PUT /api/v1/expenses/{id}/items/{itemId}/splits`)
-- [x] Settlement logic — list, mark paid (`GET /api/v1/groups/{id}/settlements`, `POST /api/v1/settlements/{id}/settle`)
+- [x] Settlement logic — list, mark paid (`GET /api/v1/groups/{id}/settlements`, `POST /api/v1/settlements/{id}/settle`); regeneration nets out paid settlements and runs on expense delete
 - [x] Expense summary (`GET /api/v1/expenses/{id}/summary`)
 - [x] Form Requests: StoreExpenseRequest, UpdateItemSplitsRequest
 - [x] DTOs: ExpenseData, SplitData
@@ -52,7 +52,7 @@
 - [x] Repositories: ExpenseRepository, ItemSplitRepository, SettlementRepository
 - [x] Actions: CreateExpenseAction, DeleteExpenseAction, UpdateItemSplitsAction, RegenerateGroupSettlementsAction, MarkSettlementPaidAction, GenerateExpenseSummaryAction
 - [x] Custom exceptions: ExpenseNotFoundException, ExpenseItemNotFoundException, SettlementNotFoundException, InvalidSplitAmountException, AlreadySettledException, NotSettlementPayerException, NotExpenseCreatorException
-- [x] Pest tests: ExpenseTest, ItemSplitTest, SettlementTest, ExpenseSummaryTest
+- [x] Pest tests: ExpenseTest, ItemSplitTest, SettlementTest, ExpenseSummaryTest, SettlementRegenerationTest
 
 ### Mobile
 - [x] Expenses service + hooks: `useExpensesQuery`, `useExpenseQuery`, `useCreateExpenseMutation`, `useDeleteExpenseMutation`, `useUpdateSplitsMutation`, `useExpenseSummaryQuery`
@@ -73,16 +73,16 @@
 - [x] `AnalyzeReceiptRequest` form validation
 - [x] `OcrResultResource` response shaping
 - [x] Custom exception: `GoogleVisionException`
-- [x] Pest test: `OcrTest`
+- [x] Pest tests: `OcrTest`, `AnalyzeReceiptActionTest`
 
 ### Mobile
-- [x] OCR service: `ocrService.ts` (Apple Vision, on-device)
+- [ ] OCR service: `ocrService.ts` (Apple Vision, on-device). Currently a stub that returns confidence 0, so every scan uses the Google Vision fallback. Needs a native module.
 - [x] OCR fallback service: `ocrFallbackService.ts` (Google Vision via API proxy)
 - [x] `useOcrScan` hook
 - [x] Scan Receipt screen — real camera capture via `CameraCapture` component (`app/(app)/groups/[groupId]/scan-receipt.tsx`)
 - [x] Review Receipt screen — editable item rows with inline name/price/quantity inputs (`app/(app)/groups/[groupId]/review-receipt.tsx`)
 - [ ] Camera capture — end-to-end real device test <!-- #TODO: open GitHub Issue -->
-- [ ] Low-confidence fallback flow — verify Google Vision fallback triggers correctly <!-- #TODO: open GitHub Issue -->
+- [x] Low-confidence fallback flow — threshold, fallback and error paths covered by `useOcrScan.test.ts` (still needs a real-device check once Apple Vision is wired)
 
 ---
 
@@ -138,8 +138,8 @@
 - [x] Model factories for all models (User, Group, Expense, ExpenseItem, ItemSplit, Settlement)
 - [x] `.env.example` — backend (`apps/api/.env.example`)
 - [x] `.env.example` — mobile (`apps/mobile/.env.example` with `EXPO_PUBLIC_API_URL`)
-- [x] CI — GitHub Actions: run Pest tests + lint on every push — `api-ci.yml` + `mobile-ci.yml`
-- [x] Frontend test suite — Jest + jest-expo + MSW v2 + RNTL: 78 tests, 21 suites — API services, hooks, stores, components, screens all covered (`apps/mobile/src/**/__tests__/`, `apps/mobile/app/**/__tests__/`)
+- [x] CI — single `ci.yml`: mobile lint, Prettier, typecheck, Jest, `expo export` bundle; API Pint + Pest on PHP 8.4
+- [x] Frontend test suite — Jest + jest-expo + MSW v2 + RNTL: 90 tests, 23 suites — API services, hooks, stores, components, screens all covered (`apps/mobile/src/**/__tests__/`, `apps/mobile/app/**/__tests__/`)
 - [x] Non-route code moved from `app/` to `src/` — eliminates Expo Router "missing default export" warnings
 - [x] pnpm `node-linker=hoisted` — required for NativeWind/Metro module resolution
 - [x] `react-native-reanimated/plugin` added to babel.config.js
@@ -152,6 +152,14 @@
 |---|---|---|
 | Phase 1 (Auth + Groups) | ✅ Done | ✅ Done |
 | Phase 2 (Expenses + Settlements) | ✅ Done | ✅ Done |
-| Phase 3 (OCR) | ✅ Done | ✅ Done (needs real-device test) |
+| Phase 3 (OCR) | ✅ Done | Partial (Apple Vision stubbed; needs real-device test) |
 | Phase 4 (Suggestions + Sharing) | ✅ Done | ✅ Done |
 | Phase 5 (Offline + Insights) | ✅ Done | ✅ Done |
+
+---
+
+## Known gaps
+
+- Apple Vision on-device OCR is not implemented (see Phase 3).
+- `SettlementRegenerationTest` and `AnalyzeReceiptActionTest` were added without a local PHP 8.4 runtime; CI is the first place they run.
+- Jest reports a worker that does not exit cleanly (open handle from the sync queue tests). Tests pass; teardown needs a look.

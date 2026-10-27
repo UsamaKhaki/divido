@@ -408,7 +408,7 @@ Get a single expense with items and splits.
 ---
 
 #### `DELETE /expenses/{expenseId}` 🔒
-Delete an expense. Only the creator (`paid_by`) can delete.
+Delete an expense. Only the creator (`paid_by`) can delete. The group's pending settlements are recalculated afterwards.
 
 **Response `200`:**
 ```json
@@ -441,7 +441,7 @@ Assign which users share a specific item and how much each owes.
 }
 ```
 
-> Sum of `amount` values must equal `item.price × item.quantity`.
+> Sum of `amount` values must equal `item.price × item.quantity`, and every `user_id` must be a member of the expense's group. The item must belong to `{expenseId}`. Pending settlements for the group are recalculated, net of settlements already marked paid.
 
 **Response `200`:**
 ```json
@@ -457,7 +457,7 @@ Assign which users share a specific item and how much each owes.
 }
 ```
 
-**Errors:** `422` — amounts don't add up, `403` — not a member, `404` — expense/item not found
+**Errors:** `422` — amounts don't add up or a split user is not a group member, `403` — not a member, `404` — expense not found or item not part of this expense
 
 ---
 
