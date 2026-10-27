@@ -131,6 +131,7 @@ export default [
       'babel.config.js',
       'metro.config.js',
       'tailwind.config.js',
+      'expo-env.d.ts',
     ],
   },
 ]

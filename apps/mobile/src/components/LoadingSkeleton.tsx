@@ -7,10 +7,7 @@ interface SkeletonBarProps {
 }
 
 const SkeletonBar = ({ opacity, className = '' }: SkeletonBarProps) => (
-  <Animated.View
-    style={{ opacity }}
-    className={`rounded-lg bg-gray-200 ${className}`}
-  />
+  <Animated.View style={{ opacity }} className={`rounded-lg bg-gray-200 ${className}`} />
 )
 
 /** Card-shaped loading skeleton. Renders 4 placeholder rows. */
