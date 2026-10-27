@@ -1,4 +1,4 @@
-# Divido — API Contracts
+# Divido: API Contracts
 
 This document is the **single source of truth** for all API endpoints.  
 Backend implements against this. Mobile consumes against this. Neither side deviates without updating this file first.
@@ -12,9 +12,9 @@ Backend implements against this. Mobile consumes against this. Neither side devi
 | Base URL | `https://<host>/api/v1` |
 | Auth | `Authorization: Bearer <sanctum-token>` |
 | Content-Type | `application/json` |
-| Date format | ISO 8601 — `2026-03-23T14:00:00.000Z` |
-| Amounts | Stored as integers (cents) or decimal strings — always `number` in JSON |
-| Protected routes | Marked 🔒 — require `Authorization` header |
+| Date format | ISO 8601: `2026-03-23T14:00:00.000Z` |
+| Amounts | Stored as integers (cents) or decimal strings: always `number` in JSON |
+| Protected routes | Marked 🔒: require `Authorization` header |
 
 ---
 
@@ -60,7 +60,7 @@ Backend implements against this. Mobile consumes against this. Neither side devi
 
 ---
 
-## Phase 1 — Authentication, Groups, Expenses
+## Phase 1: Authentication, Groups, Expenses
 
 ---
 
@@ -94,7 +94,7 @@ Create a new user account.
 }
 ```
 
-**Errors:** `422` — validation failure
+**Errors:** `422`: validation failure
 
 ---
 
@@ -124,7 +124,7 @@ Authenticate and receive a Sanctum token.
 }
 ```
 
-**Errors:** `401` — invalid credentials, `422` — validation failure
+**Errors:** `401`: invalid credentials, `422`: validation failure
 
 ---
 
@@ -141,7 +141,7 @@ Revoke the current token.
 }
 ```
 
-**Errors:** `401` — unauthenticated
+**Errors:** `401`: unauthenticated
 
 ---
 
@@ -159,7 +159,7 @@ Return the authenticated user.
 }
 ```
 
-**Errors:** `401` — unauthenticated
+**Errors:** `401`: unauthenticated
 
 ---
 
@@ -211,7 +211,7 @@ Create a new group. The creator is automatically added as a member.
 }
 ```
 
-**Errors:** `422` — validation failure
+**Errors:** `422`: validation failure
 
 ---
 
@@ -234,7 +234,7 @@ Get a single group with its members.
 }
 ```
 
-**Errors:** `403` — not a member, `404` — not found
+**Errors:** `403`: not a member, `404`: not found
 
 ---
 
@@ -249,7 +249,7 @@ Delete a group. Only the creator can delete.
 }
 ```
 
-**Errors:** `403` — not the creator, `404` — not found
+**Errors:** `403`: not the creator, `404`: not found
 
 ---
 
@@ -275,7 +275,7 @@ Add a member to a group by email.
 }
 ```
 
-**Errors:** `404` — user not found, `422` — already a member, `403` — not a group member
+**Errors:** `404`: user not found, `422`: already a member, `403`: not a group member
 
 ---
 
@@ -290,7 +290,7 @@ Remove a member from a group. Only the creator can remove others; members can re
 }
 ```
 
-**Errors:** `403` — unauthorized, `404` — not found
+**Errors:** `403`: unauthorized, `404`: not found
 
 ---
 
@@ -327,7 +327,7 @@ List expenses for a group. Paginated, newest first.
 }
 ```
 
-**Errors:** `403` — not a member, `404` — group not found
+**Errors:** `403`: not a member, `404`: group not found
 
 ---
 
@@ -370,7 +370,7 @@ Create a new expense with optional items.
 }
 ```
 
-**Errors:** `422` — validation failure, `403` — not a group member
+**Errors:** `422`: validation failure, `403`: not a group member
 
 ---
 
@@ -403,7 +403,7 @@ Get a single expense with items and splits.
 }
 ```
 
-**Errors:** `403` — not a group member, `404` — not found
+**Errors:** `403`: not a group member, `404`: not found
 
 ---
 
@@ -418,11 +418,11 @@ Delete an expense. Only the creator (`paid_by`) can delete. The group's pending 
 }
 ```
 
-**Errors:** `403` — not the creator, `404` — not found
+**Errors:** `403`: not the creator, `404`: not found
 
 ---
 
-## Phase 2 — Item Splitting & Settlements
+## Phase 2: Item Splitting & Settlements
 
 ---
 
@@ -457,7 +457,7 @@ Assign which users share a specific item and how much each owes.
 }
 ```
 
-**Errors:** `422` — amounts don't add up or a split user is not a group member, `403` — not a member, `404` — expense not found or item not part of this expense
+**Errors:** `422`: amounts don't add up or a split user is not a group member, `403`: not a member, `404`: expense not found or item not part of this expense
 
 ---
 
@@ -503,11 +503,11 @@ Mark a settlement as paid.
 }
 ```
 
-**Errors:** `403` — not the payer, `404` — not found, `422` — already settled
+**Errors:** `403`: not the payer, `404`: not found, `422`: already settled
 
 ---
 
-## Phase 3 — OCR
+## Phase 3: OCR
 
 ---
 
@@ -534,11 +534,11 @@ Proxy a receipt image to Google Vision and return parsed text.
 }
 ```
 
-**Errors:** `422` — image too large or missing, `429` — rate limited (30 req/min), `502` — Google Vision error
+**Errors:** `422`: image too large or missing, `429`: rate limited (30 req/min), `502`: Google Vision error
 
 ---
 
-## Phase 4 — Smart Suggestions
+## Phase 4: Smart Suggestions
 
 ---
 
@@ -581,7 +581,7 @@ Generate a text summary for sharing (WhatsApp, etc.).
 
 ---
 
-## Phase 5 — Insights
+## Phase 5: Insights
 
 ---
 
@@ -605,7 +605,7 @@ Return spending analytics for a group.
 }
 ```
 
-**Errors:** `403` — not a member, `404` — group not found
+**Errors:** `403`: not a member, `404`: group not found
 
 ---
 
@@ -613,12 +613,12 @@ Return spending analytics for a group.
 
 | Code | Meaning |
 |---|---|
-| `200` | OK — successful read or update |
-| `201` | Created — new resource created |
-| `401` | Unauthenticated — missing or invalid token |
-| `403` | Forbidden — authenticated but not authorized |
-| `404` | Not Found — resource doesn't exist |
-| `422` | Unprocessable — validation failed |
-| `429` | Too Many Requests — rate limit exceeded |
-| `500` | Server Error — unexpected failure |
-| `502` | Bad Gateway — external API (Google Vision) failed |
+| `200` | OK: successful read or update |
+| `201` | Created: new resource created |
+| `401` | Unauthenticated: missing or invalid token |
+| `403` | Forbidden: authenticated but not authorized |
+| `404` | Not Found: resource doesn't exist |
+| `422` | Unprocessable: validation failed |
+| `429` | Too Many Requests: rate limit exceeded |
+| `500` | Server Error: unexpected failure |
+| `502` | Bad Gateway: external API (Google Vision) failed |
