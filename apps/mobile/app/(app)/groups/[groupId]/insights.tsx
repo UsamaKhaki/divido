@@ -1,11 +1,13 @@
 import { useLocalSearchParams } from 'expo-router'
 import { useEffect, useRef } from 'react'
-import { Animated, ScrollView, Text, View } from 'react-native'
+import { Animated, ScrollView, StyleSheet, Text, View } from 'react-native'
 
 import { EmptyState } from '@/components/EmptyState'
 import { ErrorState } from '@/components/ErrorState'
 import { LoadingSkeleton } from '@/components/LoadingSkeleton'
 import { useGroupInsightsQuery } from '@/features/insights/hooks/useGroupInsightsQuery'
+
+const BAR_COLOR = '#3b82f6' // Tailwind blue-500, matching the rest of the screen
 
 const formatAmount = (amount: number) => `PKR ${amount.toFixed(2)}`
 
@@ -27,10 +29,19 @@ const PercentBar = ({ percent }: { percent: number }) => {
 
   return (
     <View className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
-      <Animated.View className="h-full rounded-full bg-blue-500" style={{ width: animatedWidth }} />
+      {/* StyleSheet, not className: NativeWind does not style Animated.View on web. */}
+      <Animated.View style={[styles.barFill, { width: animatedWidth }]} />
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  barFill: {
+    height: '100%',
+    borderRadius: 9999,
+    backgroundColor: BAR_COLOR,
+  },
+})
 
 export default function InsightsScreen() {
   const { groupId: groupIdParam } = useLocalSearchParams<{ groupId: string }>()
