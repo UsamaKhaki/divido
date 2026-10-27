@@ -44,7 +44,7 @@ export const ExpenseCard = ({ expense, groupId }: ExpenseCardProps) => {
         </View>
         <View className="items-end">
           <Text className="text-base font-bold text-gray-900">
-            ${expense.total_amount.toFixed(2)}
+            PKR {expense.total_amount.toFixed(2)}
           </Text>
           <Text className="mt-0.5 text-xs text-gray-400">{formattedDate}</Text>
         </View>

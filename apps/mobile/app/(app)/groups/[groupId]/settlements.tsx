@@ -4,6 +4,7 @@ import { Alert, Pressable, ScrollView, Text, View } from 'react-native'
 import { EmptyState } from '@/components/EmptyState'
 import { ErrorState } from '@/components/ErrorState'
 import { LoadingSkeleton } from '@/components/LoadingSkeleton'
+import { useAuthStore } from '@/features/auth/store/authStore'
 import { useGroupQuery } from '@/features/groups/hooks/useGroupQuery'
 import { useNotificationPermission } from '@/features/notifications/hooks/useNotificationPermission'
 import { useScheduleReminder } from '@/features/notifications/hooks/useScheduleReminder'
@@ -17,6 +18,7 @@ export default function SettlementsScreen() {
 
   const { data, isLoading, isError, refetch } = useSettlementsQuery(groupId)
   const { data: group } = useGroupQuery(groupId)
+  const currentUserId = useAuthStore((s) => s.user?.id)
   const { mutate: settle, isPending: isSettling } = useSettleMutation()
   const { schedule } = useScheduleReminder()
   const hasPermission = useNotificationPermission()
@@ -73,6 +75,7 @@ export default function SettlementsScreen() {
               key={s.id}
               settlement={s}
               isSettling={isSettling}
+              canSettle={s.from.id === currentUserId}
               onSettle={handleSettle}
             />
           ))}
@@ -86,7 +89,13 @@ export default function SettlementsScreen() {
             Settled
           </Text>
           {settled.map((s) => (
-            <SettlementCard key={s.id} settlement={s} isSettling={false} onSettle={handleSettle} />
+            <SettlementCard
+              key={s.id}
+              settlement={s}
+              isSettling={false}
+              canSettle={false}
+              onSettle={handleSettle}
+            />
           ))}
         </>
       ) : null}

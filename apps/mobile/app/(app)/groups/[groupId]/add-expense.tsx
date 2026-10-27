@@ -110,7 +110,15 @@ export default function AddExpenseScreen() {
       },
       {
         onSuccess: () => {
-          router.back()
+          // A web reload or deep link leaves no history to go back to.
+          if (router.canGoBack()) {
+            router.back()
+          } else {
+            router.replace({
+              pathname: '/(app)/groups/[groupId]',
+              params: { groupId: String(groupId) },
+            })
+          }
         },
       },
     )

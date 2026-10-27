@@ -5,10 +5,17 @@ import type { Settlement } from '@/types/api.types'
 interface SettlementCardProps {
   settlement: Settlement
   isSettling: boolean
+  /** Only the person who owes the money may mark it paid (the API enforces this). */
+  canSettle: boolean
   onSettle: (id: number) => void
 }
 
-export const SettlementCard = ({ settlement, isSettling, onSettle }: SettlementCardProps) => {
+export const SettlementCard = ({
+  settlement,
+  isSettling,
+  canSettle,
+  onSettle,
+}: SettlementCardProps) => {
   const isSettled = settlement.status === 'settled'
 
   return (
@@ -41,6 +48,8 @@ export const SettlementCard = ({ settlement, isSettling, onSettle }: SettlementC
           <View className="rounded-full bg-green-100 px-3 py-1.5">
             <Text className="text-xs font-semibold text-green-700">Paid ✓</Text>
           </View>
+        ) : !canSettle ? (
+          <Text className="text-xs text-gray-400">Waiting for {settlement.from.name}</Text>
         ) : (
           <Pressable
             className="min-h-[36px] min-w-[80px] items-center justify-center rounded-xl bg-blue-600 px-4"

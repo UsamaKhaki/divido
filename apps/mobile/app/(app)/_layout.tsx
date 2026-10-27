@@ -50,6 +50,14 @@ export default function AppLayout() {
         name="groups/[groupId]/settlements"
         options={{ title: 'Settlements', headerShown: true }}
       />
+      <Stack.Screen
+        name="groups/[groupId]/insights"
+        options={{ title: 'Insights', headerShown: true }}
+      />
+      <Stack.Screen
+        name="groups/[groupId]/scan-receipt"
+        options={{ title: 'Scan Receipt', headerShown: true }}
+      />
     </Stack>
   )
 }

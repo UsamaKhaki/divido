@@ -12,7 +12,7 @@ describe('ExpenseCard', () => {
     const expense = factory.expenseSummary({ title: 'Hotel Stay', total_amount: 4500 })
     render(<ExpenseCard expense={expense} groupId={1} />)
     expect(screen.getByText('Hotel Stay')).toBeTruthy()
-    expect(screen.getByText('$4500.00')).toBeTruthy()
+    expect(screen.getByText('PKR 4500.00')).toBeTruthy()
   })
 
   it('renders payer name', () => {
